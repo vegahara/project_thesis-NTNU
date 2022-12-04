@@ -1,0 +1,31 @@
+\chapter{Method}
+
+\section{1D Landmark Detector using Peak Detection}
+
+The 1D landmark detector does peak detection in scan lines to find shadows and echoes and filter out non-significant echoes and shadows using a simple rule.
+
+To improve upon the 1D landmark detector, as \todo{cite 1D paper} suggests, normalized data is used instead of raw sonar data. 
+
+To further improve the method, we reject the landmarks in scan lines where more than $x\%$ of the bins are considered detected landmarks as false positives. 
+
+\section{2D Landmark Detector using Expert Rules}
+
+The 2D landmark detector finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and form. 
+
+Instead of the suggested intensity threshold in \todo{cite 2d paper}, this report introduces a new, more robust intensity threshold.
+
+We perform low-pass filtering and a closing operation to improve robustness and landmark consistency in the sonar image.
+
+\section{Qualitative comparison}
+
+ This report makes a qualitative comparison of the landmark detectors' results to compare them against each other.
+
+To compare the method, an understanding of what parts of the sonar image are actual landmarks and what properties are consistent with a landmark. 
+
+Landmark consistency is an essential qualitative measure and tells to what extent a landmark detection method can detect one real landmark as one coherent landmark or several smaller landmarks. 
+
+Another vital measure when comparing landmark detection methods is the sensitivity and complexity of the tuning.
+
+
+
+% Skrive litt om hvordan jeg går fra sonar data til bilder jeg bruker.

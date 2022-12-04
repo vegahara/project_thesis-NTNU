@@ -35,6 +35,41 @@
     }
 }
 
+% Title Page
+\DeclareOption{titlepagevegard}{
+    \AtBeginDocument{
+        \begin{titlepage}
+            \begin{center}
+                \vspace*{1cm}
+        
+                \textbf{\Huge{Comparison of two classical landmark detectors for side scan sonars}\par} 
+        
+                \vspace{0.5cm}
+                    \Large{\normalfont	This report tests two landmark detectors and qualitatively compares them against each other on data from various locations, showing that the methods lack robustness and are not invariant to changes when the environment.}
+                    
+                \vspace{1.2cm}
+        
+                \textbf{\LARGE Vegard Haraldstad}
+        
+                \vfill
+
+                \vspace{0.8cm}
+             
+                \includegraphics[width=0.7\textwidth]{figures/ntnu_bredde_eng.png}
+                
+                \vspace{4cm}
+                
+                \normalsize	
+                Department of Engineering Cybernetics\\
+                NTNU - Norwegian University of Science and Technology\\
+                Norway\\
+                \today
+            
+            \end{center}
+        \end{titlepage}
+    }
+}
+
 % British
 \newif\ifcapitalize
 \DeclareOption{british}{
@@ -140,7 +175,6 @@
 \LoadClass[a4paper,11pt,openright,\paging]{report}
 
 %% PACKAGE LOADING
-
 \RequirePackage[utf8]{inputenc}             % for special characters in input
 \RequirePackage[T1]{fontenc}                % modern font encoding
 \RequirePackage[charter, cal=cmcal]{mathdesign} % main font with math support
@@ -153,6 +187,7 @@
 \RequirePackage{enumitem}                   % customising list appearance
 \RequirePackage{graphicx}                   % including figures
 \RequirePackage{amsmath}                    % advanced math typesetting
+\RequirePackage{siunitx}            
 \RequirePackage[                            % subfigures with captions within figures
     font=small,                             % and customisation of captions
     labelfont=bf,

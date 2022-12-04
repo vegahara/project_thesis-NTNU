@@ -1,0 +1,28 @@
+\chapter{Discussion}
+
+\section{1D Landmark Detector using Peak Detection}
+
+As shown in figure \todo{ref 1D figure}, the landmark detection method cannot pick out the more significant landmarks without many false positives or noise. 
+
+Tuning the method was difficult because the threshold parameter does not directly link to the important properties of the landmarks, such as size and form, but is more directly linked to the intensity properties of each of the landmarks. 
+
+The 1D landmark method cannot pick up all significant landmarks and produce an acceptable amount of false positives, and is not usable in any practical application.
+
+\section{2D Landmark Detector using Expert Rules}
+
+As shown in figure \todo{ref 2D figure}, the 2D method can find the landmarks in the image almost without false positives.
+
+The tuning process is simple and intuitive, and as shown in figure \todo{ref fig}, we can easily tune the different parameters to pick out the landmarks with the wanted properties. 
+% Difficult to tune a_corr threshold because it is not directly linked to the sizes on the map
+
+The 2D landmark detector produces acceptable results but has some weaknesses since it works in the image space, not the world space. 
+
+% Could one option be to do a second threshold round to ensure that the detected landmarks are consistent? for example, by finding the mean intensity of each landmark. Then plus on some number and add all connected pixels around the landmark under this threshold. 
+
+\section{Comparison}
+
+One of the most important differences between the two methods is how well they are able to pick up significant landmarks and keep the number of false positives low. 
+
+For tuning the methods, the 2D method has parameters directly linked to the phenomena seen in the plots and is easy to tune. In contrast, the 1D method has a parameter that is not easy to interpret the meaning of in the data and hence less intuitive to tune.
+
+Say something about computational speed. 1D does all computations on scan lines, which is a plus. 2D works in buffered images. How is that influencing the performance?

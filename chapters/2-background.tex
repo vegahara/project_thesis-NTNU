@@ -1,0 +1,86 @@
+\chapter{Background}
+
+\section{Simultaneous localization and mapping}
+
+Simultaneous localization and mapping (SLAM) is a methodology of building a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform in the same map. 
+% End with front/back-end.
+
+The front-end of SLAM consists of feature extraction and data association.
+
+The back-end of SLAM mainly consists of maximum a posteriori (MAP) estimation that smooths the map and the poses of the mobile platform. 
+
+Factor graphs are the de-facto standard for modeling the SLAM methodology. 
+
+\section{Side Scan Sonar}
+
+The side scan sonar is a two-transducer sonar mounted so that each transducer points downwards and outwards to the port and starboard, respectively.
+
+\section{Landmark Detection}
+
+Landmark detection is to pick out interesting features, or in other words, landmarks, from data generated from observing the surroundings.
+
+\subsection{Landmark detection using classical methods}
+
+Classical landmark detection methods for side scan sonar data exploit signal and image processing methods such as peak, edge, and shadow detection. 
+
+\subsubsection{Detecting shadows and echoes in sonar scan lines}
+
+Finding signal peaks and the width and prominence of the peaks are essential metrics in 1D signal processing. 
+
+\subsubsection{Data normalization and smoothing}
+
+Cubic splines can be used to both normalize SSS data and to smooth the data to remove noise. 
+
+\subsubsection{Generating consistent landmarks}
+
+Morphological operators or low-pass filters can be utilized to ensure consistent landmarks and that one landmark is generated for each natural landmark.
+
+\subsubsection{1D landmark detection}
+
+1D landmark detection does the detection in the 1D scan lines, for example, by finding peaks and valleys in the scan line corresponding to echoes and shadow, respectively.
+
+\subsubsection{2D landmark detection}
+
+2D landmark detection works in a 2D sonar image and uses techniques such as intensity thresholding, edge detection, and general image processing.
+
+\subsection{Landmark detection using deep learning}
+
+In recent years, making use of the rapidly evolving field of deep learning to do landmark detection has grown in popularity.
+
+
+
+
+
+
+
+
+% This is not part of the introduction, just old notes.
+
+\section{Background}
+
+\subsection{Autonomous underwater vehicles}
+
+AUVs depend upon dead reckoning for navigation because of the lack of global position measurements from, for example, GNSS.
+% Avslutt avsnittet med å si at SLAM er state of the art etc og pek videre på neste subsection.
+
+\subsection{Simultaneously Localization and Mapping}
+
+SLAM is the state-of-the-art framework for robot navigation and localization.
+
+Feature-based or indirect SLAM uses features or landmarks to help the robot navigate.
+% Avslutt med at landmarks finnes gjennom sensoren som er farkostens "øyne" og for AUVer er det veldig typisk en sonar. 
+
+\subsection{Sonar}
+
+A sonar is a sensor that sends out acoustic pulses and measures the intensity of the echo return, and in such a way, can provide a representation of the surroundings.
+
+Under the supervision of  Damiano  Varagnolo and  Simon  Andreas  Hagen  Hoff, Bjørnar Reitan Hogstad has developed a sonar processing pipeline that forms the basis for this project. (Describe earlier work)
+
+\subsection{Landmark Detection}
+
+A landmark detector that can robustly detect landmarks in the seabed over various environments is needed to enable feature-based SLAM.
+
+
+
+
+
