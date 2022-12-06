@@ -1,18 +1,19 @@
 \chapter{Method}
 
+\section{Quality Indicator for Side Scan Sonar Data}
+
+
 \section{1D Landmark Detector using Peak Detection}
 
 The 1D landmark detector does peak detection in scan lines to find shadows and echoes and filter out non-significant echoes and shadows using a simple rule.
 
-To improve upon the 1D landmark detector, as \todo{cite 1D paper} suggests, normalized data is used instead of raw sonar data. 
-
-To further improve the method, we reject the landmarks in scan lines where more than $x\%$ of the bins are considered detected landmarks as false positives. 
+To improve upon the 1D landmark detector, as \cite{Al-Rawi2017LandmarkImages} suggests, normalized data is used instead of raw sonar data. and morphological operators are used to removing thin landmarks and improve consistency. 
 
 \section{2D Landmark Detector using Expert Rules}
 
 The 2D landmark detector finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and form. 
 
-Instead of the suggested intensity threshold in \todo{cite 2d paper}, this report introduces a new, more robust intensity threshold.
+Instead of the suggested intensity threshold in \cite{Leblond2019SonarProject}, this report introduces a new, more robust intensity threshold.
 
 We perform low-pass filtering and a closing operation to improve robustness and landmark consistency in the sonar image.
 

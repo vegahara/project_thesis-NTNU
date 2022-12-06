@@ -45,7 +45,7 @@
                 \textbf{\Huge{Comparison of two classical landmark detectors for side scan sonars}\par} 
         
                 \vspace{0.5cm}
-                    \Large{\normalfont	This report tests two landmark detectors and qualitatively compares them against each other on data from various locations, showing that the methods lack robustness and are not invariant to changes when the environment.}
+                    \Large{\normalfont	This report tests two landmark detectors and qualitatively compares them against each other on data from the Trondheim fjord, showing that the methods can robustly detect landmarks in the data.}
                     
                 \vspace{1.2cm}
         

@@ -12,6 +12,22 @@
 \addtolength{\evensidemargin}{-.875in}
 \addtolength{\textwidth}{1.75in}
 
+\DeclareFieldFormat[misc]{title}{\mkbibquote{#1}}  % show title in quotes
+\DeclareBibliographyDriver{misc}{%
+    \printnames{author}%
+    \newunit%
+    \printfield{title}%
+    \newunit%
+    \printfield{url}%
+    \newunit%
+    \printfield{booktitle}%  display booktitle or last-accessed for websites
+    \newunit%
+    \printfield{issn}%
+    \newunit%
+    \printfield{doi}%
+    \finentry
+}
+
 \addbibresource{thesis.bib}
 
 %\input{glossary.tex} % add glossary and acronym lists before document
