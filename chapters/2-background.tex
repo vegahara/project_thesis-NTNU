@@ -1,19 +1,70 @@
 \chapter{Background}
 
-\section{Simultaneous localization and mapping}
+\section{Simultaneous Localization And Mapping}
 
-Simultaneous localization and mapping (SLAM) is a methodology of building a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform in the same map. 
-% End with front/back-end.
+Simultaneous localization and mapping (SLAM) is a procedure of acquiring a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform on the same map, and it is one of the key enabling technologies of mobile robot navigation \cite{Stachniss2016SimultaneousMapping}. More technically, SLAM is the procedure of estimating the sequence of robot poses, or the robot path, given as  
 
-The front-end of SLAM consists of feature extraction and data association.
+\begin{equation}
+    X_t = \{x_o, x_1, x_2,...,x_t\}
+    \label{eq:path}
+\end{equation}
 
-The back-end of SLAM mainly consists of maximum a posteriori (MAP) estimation that smooths the map and the poses of the mobile platform. 
+where $t$ denotes the time. The robot uses different sensors and/or motion models to obtain its odometry, the relative motion between time $t-1$ and $t$, given by:
 
-Factor graphs are the de-facto standard for modeling the SLAM methodology. 
+\begin{equation}
+    U_t = \{u_o, u_1, u_2,...,u_t\}
+    \label{eq:odom}
+\end{equation}
+
+Further, the robot uses sensors to sense the environment and the objects, or landmarks, in the environment. Let the pose of landmark $n$ be denoted $l_n$. Then, the robot measures the relative position between its pose, $x_t$, and the landmark poses of the landmarks in map $m$. Let the vector containing all landmark measurements at time $t$ be denoted $z_t$. The measurement of landmarks is then given by:
+
+\begin{equation}
+    Z_t = \{z_0, z_1, z_2,...,z_t\}
+    \label{eq:landmark_measurements}
+\end{equation}
+
+Factor graphs are the de-facto standard for modeling SLAM. The nodes in the graph represent the robot poses and the landmark positions, and the factors represent the odometry and landmark measurements. \cref{fig:factor_graph} shows a simple SLAM problem with four poses, $x_t$, and two landmarks, $l_n$. The odometry, $u_t$, between the poses and landmark measurements, $z_{t,n}$ of landmark $n$ at time $t$ is given as:
+
+\begin{equation}
+    u_t = p(x_t \,|\, x_{t-1},u_t)
+    \label{eq:odom_pdf}
+\end{equation}
+
+\begin{equation}
+    z_{t,n} = p(z_{t,n} \,|\, x_{t-1},m)
+    \label{eq:landmark_measurement_pdf}
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/factor_graph.drawio.pdf}
+    \caption{Factor graph of a simple SLAM problem containing four poses and two landmarks}
+    \label{fig:factor_graph}
+\end{figure}
+
+Using the factor graph formulation, the SLAM problem can be formulated as a maximum a posteriori (MAP) estimation, where the goal is to estimate the path, $X_t$, and map, $m$ that maximize the likelihood given by:
+
+\begin{equation}
+    X_t^*, m^* = \argmax_{X_t,m} \, logp(X_t,m \,|\, Z_t,U_t)
+    \label{eq:SLAM}
+\end{equation}
+
+which is also often called the back-end of SLAM.
+
+The front-end of SLAM consists of landmark extraction and data association. Landmark extraction is the procedure of finding and extracting landmarks from the sensors sensing the environment, for example, an RGB-D camera.  Data association is the procedure of determining the landmark identity of the extracted landmarks.
+
+Underwater SLAM is a challenging research topic, and task for underwater vehicles in long-term operation due to the limitations of subsea localization sensors and perception sensors for mapping \cite{Hidalgo2015ReviewTechniques}. The perception sensors available underwater are sonars and cameras, where sonars typically provide noisy and distorted images or low-resolution ranging, and cameras provide highly detailed images but are limited by the range of sight due to turbidity and lightning. For unstructured applications, often referred to as seafloor applications, side scan sonar (SSS), forward-looking sonar (FLS), and camera is the preferred perception sensors. Due to the problems with reduced range of sight for cameras and the high cost of FLS, this report focuses on landmark detection using SSS.
 
 \section{Side Scan Sonar}
 
-The side scan sonar (SSS) is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor.\todo{Place fig of sonar} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF). The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s,max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together.
+The side scan sonar is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor.\cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF). The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s,max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/sss.drawio.pdf}
+    \caption{Typical configuration of the side scan sonar.}
+    \label{fig:sss}
+\end{figure}
 
 Since the topology of the seafloor is unknown, an assumption about a flat seafloor is made to calculate the ground range, $r_g$. The ground range represents the slant range, $r_s$, projected into the horizontal plane. \cref{eq:ground_range} shows the calculation of the ground range under the flat floor assumption, where $h$ is the altitude of the AUV above the seafloor.
 
@@ -22,15 +73,38 @@ Since the topology of the seafloor is unknown, an assumption about a flat seaflo
     \label{eq:ground_range}
 \end{equation}
 
-\subsubsection{Data normalization and smoothing}
+\section{Data normalization and smoothing}
 
-Cubic splines can be used to both normalize SSS data \cite{ReitanHogstad2022Side-ScanAutonomy} and to smooth the data to remove noise \cite{Al-Rawi2017LandmarkImages}. 
+Cubic splines can be used to both normalize SSS data \cite{ReitanHogstad2022Side-ScanAutonomy} and to smooth the data to remove noise \cite{Al-Rawi2017LandmarkImages}. To normalize the SSS data, cubic spline regression estimates the underlying distribution of intensity values. For smoothing the SSS data, the cubic spline regression is used as the new smoothed data. The cubic smoothing spline, $f$, is: 
+
+\begin{equation}
+    {f}(x) = \min_{f} p \sum_{i=1}^n |y_i-f(x_i)|^2 + (1-p) \int|D^2f(t)|^2dt
+    \label{eq:cubic_spline}
+\end{equation}
+
+where the first term is the error term and the second is the roughness measure. $n$ is the number of data entries, and $y_i$ sample $i$ of the data. $D^2f$ is the second derivate of $f$, and the integral is taken over the smallest interval containing all the entries of $x$. $p \in [0,1]$ is the smoothing parameter used to weigh between the error term and the roughness measure. 
+
+For smoothing SSS data, each of the swaths is divided into a left and right swath,  coming from the left and right transducer. Each of the parts of the swath is smoothed individually to form a cubic spline regression of the data, resulting in
+
+\begin{equation}
+    \hat{I}(z) = f(z)
+    \label{eq:swath_smoothing}
+\end{equation}
+
+for each bin, where $f$ is the smoothing cubic spline of the swath, found from \cref{eq:cubic_spline}.
+
+Normalization, on the other hand, estimates the underlying distribution by cubic spline regression to normalize the data by
+
+\begin{equation}
+    \hat{I}(z) = \frac{I(z)}{f(z)}
+    \label{eq:swath_norm}
+\end{equation}
+
+where $I(z)$ is the echo intensity at bin $z$, and again $f$ is the smoothing cubic spline of the swath, found from \cref{eq:cubic_spline}.
 
 \section{Landmark Detection}
 
-Landmark detection is to pick out interesting features, or in other words, landmarks, from data generated from observing the surroundings. For SSS data, this is often translated to detect natural or man-made objects on the seafloor. Due to SLAM for underwater vehicles being a challenging research topic \cite{Hidalgo2015ReviewTechniques}, the current research on landmark detection is not rich. A closely related research topic is the detection of mines on the seafloor, where the object also is to extract objects of interest on the seafloor \cite{Picard2016DetectionDimensionality}. In general, there are two main categories for detecting landmarks on the seafloor, either by classical methods, finding the echoes and/or shadows of the landmarks, or by using machine learning to extract the features. In recent years, using the rapidly evolving field of deep learning to do feature detection in sonar images has grown in popularity \cite{Wang2020ImageSonar} \cite{Zhou2022NonlinearFeatures}. However, this report focuses on landmark detection using classical methods, and machine learning for landmark detection will not be investigated further.
-
-\subsection{Landmark detection using classical methods}
+Landmark detection is to pick out interesting features, or in other words, landmarks, from data generated from observing the surroundings. For SSS data, this is often translated to detect natural or man-made objects on the seafloor. Due to SLAM for underwater vehicles being a challenging research topic \cite{Hidalgo2015ReviewTechniques}, the current research on landmark detection is not rich. A closely related research topic is the detection of mines on the seafloor, where the object also is to extract objects of interest on the seafloor \cite{Picard2016DetectionDimensionality}. In general, there are two main categories for detecting landmarks on the seafloor, either by classical methods, finding the echoes and/or shadows of the landmarks, or by using machine learning to extract the features. In recent years, using the rapidly evolving field of deep learning to do feature detection in sonar images has grown in popularity \cite{Wang2020ImageSonar} \cite{Zhou2022NonlinearFeatures}. However, this report focuses on landmark detection using classical methods, and machine learning for landmark detection will not be treated further.
 
 Classical landmark detection methods for side scan sonar data exploit signal and image processing methods to find echoes and shadows in SSS data to extract landmarks. Classical methods can further be split into finding shadows and/or echoes in 1-dimensional swaths or 2-dimensional sonar images.
 
@@ -38,7 +112,7 @@ By doing peak detection, finding echoes and shadows in swaths is done in \cite{A
 
 Landmark detection on 2D sonar images is the most common approach when doing classical landmark detection \cite{Wang2017UnderwaterSonar} \cite{Siantidis2016SideVehicles} \cite{Yuan2016AnNavigation} \cite{Leblond2019SonarProject}. The general approach uses a threshold to segment the image, either chosen arbitrarily or found adaptively. Depending on the method, the image is segmented into background, shadows, and/or echoes. Further, the shadows and/or landmarks are filtered to find landmarks with specific properties. \cite{Leblond2019SonarProject} filters shadows based on their geometrical properties to find consistent landmarks. 
 
-\subsection{Generating consistent landmarks}
+\section{Generating consistent landmarks}
 
 Morphological operators or low-pass filters can be utilized to ensure consistent landmarks \cite{Yuan2016AnNavigation}. Both morphological operators and low-pass filtering are well-known image-processing tools based on a structuring element that is slided over the image, one pixel at a time, to compute new pixel values \cite{Gonzalez2018DigitalProcessing}. \cref{fig:image_processing_basics} shows the three first steps of such a process. Here the structuring element is of size $3\times3$ with the origin at the center. 
 
