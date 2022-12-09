@@ -61,7 +61,7 @@ In \cite{Al-Rawi2017LandmarkImages}, un-normalized SSS data is used, but the use
 
 \section{2D Landmark Detector using Expert Rules}
 
-The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and form. The first step is to perform an intensity thresholding on all the pixels to find shadows. The suggested intensity threshold is:
+The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and shape. The first step is to perform an intensity thresholding on all the pixels to find shadows. The suggested intensity threshold is:
 
 \begin{equation}
     t_i = \frac{\Bar{I(x,y)}}{2}
@@ -92,20 +92,21 @@ where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bound
 
 \begin{table}
     \begin{center}
-    \begin{tabular}{|l|l|}
-    \hline
+    \caption{The table shows all the tunable parameters for the 2D landmark detector and the corresponding filtering rules applied.}
+    \begin{tabular}{ll}
+        \hline
         \textbf{Tunable parameter} & \textbf{Filtering rule}                            \\ \hline
-        $k_g$             & Gaussian blurring of the sonar image with SE of size $k_g$  \\ \hline
-        $k_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ \hline
-        $k_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ \hline
-        $n_{swaths,min}$  & $n_{swaths} > n_{swaths,min}$                               \\ \hline
-        $n_{swaths,max}$  & $n_{swaths} < n_{swaths,max}$                               \\ \hline
-        $r_{ob,min}$      & $A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}$           \\ \hline
-        $A_{min}$         & $A_{corr} > A_{min}$                                        \\ \hline
-        $t_{fr}$          & $\frac{A_s}{A_{bb}} > t_{fr}$                               \\ \hline
+        $k_g$             & Gaussian blurring of the sonar image with SE of size $k_g$  \\ 
+        $k_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ 
+        $k_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ 
+        $n_{swaths,min}$  & $n_{swaths} > n_{swaths,min}$                               \\ 
+        $n_{swaths,max}$  & $n_{swaths} < n_{swaths,max}$                               \\ 
+        $r_{ob,min}$      & $A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}$           \\ 
+        $A_{min}$         & $A_{corr} > A_{min}$                                        \\ 
+        $t_{fr}$          & $\frac{A_s}{A_{bb}} > t_{fr}$                               \\ 
+        \hline
     \end{tabular}
     \end{center}
-    \caption{The table shows all the tunable parameters for the 2D landmark detector and the corresponding filtering rules applied.}
     \label{tab:2D_tuning_rules}
 \end{table}
 

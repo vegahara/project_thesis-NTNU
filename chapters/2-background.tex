@@ -1,5 +1,7 @@
 \chapter{Background}
 
+This chapter will present the relevant background for this report. 
+
 \section{Simultaneous Localization And Mapping}
 
 Simultaneous localization and mapping (SLAM) is a procedure of acquiring a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform on the same map, and it is one of the key enabling technologies of mobile robot navigation \cite{Stachniss2016SimultaneousMapping}. More technically, SLAM is the procedure of estimating the sequence of robot poses, or the robot path, given as  
@@ -57,7 +59,7 @@ Underwater SLAM is a challenging research topic, and task for underwater vehicle
 
 \section{Side Scan Sonar}
 
-The side scan sonar is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor.\cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF). The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s,max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together.
+The side scan sonar is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor. \cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF). The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s,max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together.
 
 \begin{figure}
     \centering
