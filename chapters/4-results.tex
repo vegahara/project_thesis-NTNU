@@ -11,13 +11,20 @@ This chapter will present results from testing the landmark detector methods and
   \label{fig:neptus_screenshot}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \includegraphics[trim=0cm 2cm 0cm 3cm, clip=true, width=1.0\textwidth]{figures/path_sonar_colorbars_training.eps}
+    \caption{todo{Caption}}
+    \label{fig:path_sonar_colorbars}
+\end{figure}
+
 \section{Side scan sonar quality indicator}
 
 The quality indicator is a measure that tries to say something about the quality of the SSS data, a measure that should be lower when turning due to overlapping swaths. \cref{fig:path_and_quality_ind} shows the result of testing the quality indicator. The left side is a plot of the path of the AUV in the xy-plane. Since the AUV is assumed to have an approximately constant altitude during the survey, altitude data is omitted. Further, the quality indicator is overlayed as the color of the path. As expected, the data quality decreases when turning due to swath overlapping. In addition, the traveled distance in the xy-plane is also shown along the path. The acquired sonar data traveling along the path is plotted on the right side, and the image's bar on the right side is the quality indicator. At a traveled distance of around $60 m$, two banana-like shadows appear. These could typically be examples of the anomalies and degradation of quality experienced when turning during a sonar survey. 
 
 \begin{figure} % order of priority: h here, t top, b bottom, p page
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/path_and_quality_indicator.eps}
+  \includegraphics[trim=0cm 2cm 5.5cm 3cm, clip=true, width=0.9\textwidth]{figures/path_and_quality_indicator.eps}
   \caption[Path with quality indicator overlayed]{\textit{Left:} The traveled path in the xy-plane of the AUV. The path's color corresponds to the quality indicator along the path, and the traveled distance is also shown. \textit{Right:} The right figure shows the sonar image acquired from moving along the path and the corresponding quality indicator.}
   \label{fig:path_and_quality_ind}
 \end{figure}
@@ -28,32 +35,34 @@ The 1D landmark detector has four tuning parameters, the threshold $t$, smoothin
 
 \begin{figure}  % order of priority: h here, t top, b bottom, p page
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/1D_norm_tuning_training.eps}
+  \includegraphics[width=1.0\textwidth]{figures/1D_raw_tuning_training.eps}
   \caption[Results of tuning threshold of the 1D method]{Results from tuning the thresholds of the 1D method with three different thresholds. Shadow landmarks are shown in green and echo landmarks are in purple. The rightmost bar on the right side is the vehicle's speed, where darker colors represent slower speeds. The second bar is the quality indicator.}
   % Parameters used: smoothing e-5, closing kernel (10,10), opening kernel (15,15)
   \label{fig:1D_norm_tuning_training}
 \end{figure}
 
-
-% \begin{figure}  % order of priority: h here, t top, b bottom, p page
-%      \centering
-%      \begin{subfigure}[b]{0.3\textwidth}
-%          \centering
-%          \includegraphics[trim=18cm 1cm 18cm 1cm, clip=true, width=\textwidth]{figures/1D_raw_tuning_t_4.eps}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{0.3\textwidth}
-%          \centering
-%          \includegraphics[trim=18cm 1cm 18cm 1cm, clip=true, width=\textwidth]{figures/1D_raw_tuning_t_5.eps}
-%      \end{subfigure}
-%      \hfill
-%      \begin{subfigure}[b]{0.3\textwidth}
-%          \centering
-%          \includegraphics[trim=18cm 1cm 18cm 1cm, clip=true, width=\textwidth]{figures/1D_raw_tuning_t_6.eps}
-%      \end{subfigure}
-%         \caption{Results of tuning the 1D landmark detector method on raw data}
-%         \label{fig:1D_raw_tuning}
-% \end{figure}
+\begin{figure} % order of priority: h here, t top, b bottom, p page
+     \centering
+    \begin{subfigure}[t]{0.339\textwidth}
+         \centering
+         \includegraphics[trim=14cm 0cm 19.7cm 0cm, clip=true, width=\textwidth]{figures/1D_raw_result_training.eps}
+         % E = 17
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.277\textwidth}
+         \centering
+         \includegraphics[trim=16.4cm 0cm 19.7cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_result_training.eps}
+         % E = 1450
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.371\textwidth}
+         \centering
+         \includegraphics[trim=16.4cm 0cm 16.1cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_morph_result_training.eps}
+         % E = 17
+     \end{subfigure}
+        \caption{}
+        \label{}
+\end{figure}
 
 \section{2D Landmark Detector using Expert Rules}
 
@@ -68,27 +77,21 @@ The 2D landmark detector has a total of six parameters to tune. The parameter $d
 
 \cref{fig:2d_tuning_paramaters_training} shows the results of tuning the last four parameters. The green landmark candidates are the landmarks filtered out in the corresponding step of the pipeline, and the purple landmarks are the kept landmarks. The leftmost image shows the sonar image. The second leftmost image results from filtering landmark candidates by along-track height. The landmark candidates are generated by applying intensity thresholding on the sonar image. Large landmarks are chosen to be filtered out because it is more difficult to detect them consistently, and therefore a more conservative choice is made. In addition, this step filters out much of the noise in the landmark candidates. The third image shows the result of applying the landmark area filtering. The parameter $A_{min} = 100$ was chosen to filter out the smallest landmarks. The fourth image shows the result of filtering out landmarks based on their fill rate of the rectangular bounding box encapsulating them. The fill rate limit was set to $r_{fr} = 0.3$ to filter out the thin and non-consistent landmarks. The last image shows the resulting landmarks.
 
-\newpage
-
-\begin{figure} [h!] % order of priority: h here, t top, b bottom, p page
-     \centering
-     \begin{subfigure}[bh]{0.59\textwidth}
-         \centering
-         \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, angle=90, width=0.85\textwidth]{figures/2D_tuning_parameters_training.eps}
-         \caption[Results of tuning the geometrical thresholds 2D method]{Results from tuning the geometrical parameters of the 2D method on training data}
-         \label{fig:2d_tuning_paramaters_training}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[bh]{0.395\textwidth}
-         \centering
-         \includegraphics[trim=0cm 6.6cm 0cm 6.5cm, clip=true, angle=90, width=0.85\textwidth]{figures/2D_result_test.eps}
-         \caption[Results from testing the 2D landmark detector]{Results from running the 2D landmark detector on the test data}
-         \label{fig:2d_result_test}
-     \end{subfigure}
-     \caption{The 2D landmark detector pipeline on training and test data. The purple landmarks are the kept landmarks in the corresponding step in the pipeline, and the green landmarks are filtered out.}
+\begin{figure}
+    \centering
+    \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=1.0\textwidth]{figures/2D_tuning_parameters_training.eps}
+    \caption[Results from testing the 2D landmark detector]{Results from running the 2D landmark detector on the test data}
+     \label{fig:2d_tuning_paramaters_training}
+     % Height 50-150, Area 100 FR 0.3 int thres 0.9
 \end{figure}
 
-\newpage
+\begin{figure}
+    \centering
+    \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=1.0\textwidth]{figures/2D_filtered_tuning_parameters_training.eps}
+    \caption[]{}
+     \label{}
+     % Height 50-150, Area 100 FR 0.3 int thres 0.85 no gaussian morph size 10
+\end{figure}
 
 \section{Landmark detection on test data}
 
@@ -96,23 +99,23 @@ Both landmark detector methods were run on the test dataset to evaluate the perf
 
 \begin{figure} % order of priority: h here, t top, b bottom, p page
      \centering
-    \begin{subfigure}[t]{0.66\textwidth}
+    \begin{subfigure}[t]{1.0\textwidth}
          \centering
-         \includegraphics[trim=5cm 0cm 7cm 1.2cm, clip=true, width=\textwidth]{figures/test_data_plain.eps}
+         \includegraphics[trim=0cm 3cm 0cm 4cm, clip=true, width=\textwidth]{figures/path_sonar_colorbars_test.eps}
          \caption{Test data}
          \label{fig:test_data}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.48\textwidth}
          \centering
-         \includegraphics[trim=11cm 0cm 13cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_result_test.eps}
+         \includegraphics[trim=11cm 0cm 12cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_result_test.eps}
          \caption{1D landmark detector. Green is echo landmarks, and purple is shadow landmarks.}
          \label{fig:1D_norm_result_test}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.45\textwidth}
+     \begin{subfigure}[b]{0.48\textwidth}
          \centering
-         \includegraphics[trim=11cm 0cm 13cm 0cm, clip=true, width=\textwidth]{figures/2D_result_single_test.eps}
+         \includegraphics[trim=11cm 0cm 12cm 0cm, clip=true, width=\textwidth]{figures/2D_result_single_test.eps}
          \caption{2D landmark detector. Purple is the detected landmarks}
          \label{fig:2D_result_single_test}
      \end{subfigure}
