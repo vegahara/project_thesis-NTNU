@@ -71,10 +71,10 @@ The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by
 where $\Bar{I(x,y)}$ is the average pixel intensity in the sonar image. However, this threshold produced close to no shadows from the data, so a new intensity threshold is suggested:
 
 \begin{equation}
-    t_i = (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min} 
+    t_i = (\Bar{I(x,y)} - I(x,y)_{min}) t_i + I(x,y)_{min} 
 \end{equation}
 
-where $I(x,y)_{min}$ is the average over the $100$ smallest pixels, which is done to be more robust against outliers in the data. $k_i$ is a tuning parameter ranging from $0$ to $1$. Using the result from the intensity thresholding, a series of filtering rules are applied to filter out shadows. First, the shadows get filtered based on how many swaths they span over, where both minimum and maximum height filtering is applied. Secondly, filtering based on the area of the shadows in $pixels^2$ is applied. To account for how the grazing angle affects the shadows, the area is corrected by
+where $I(x,y)_{min}$ is the average over the $100$ smallest pixels, which is done to be more robust against outliers in the data. $t_i$ is a tuning parameter ranging from $0$ to $1$. Using the result from the intensity thresholding, a series of filtering rules are applied to filter out shadows. First, the shadows get filtered based on how many swaths they span over, where both minimum and maximum height filtering is applied. Secondly, filtering based on the area of the shadows in $pixels^2$ is applied. To account for how the grazing angle affects the shadows, the area is corrected by
 
 \begin{equation}
     A_{corr} = A_s \times r = A \times \frac{r_{ob,min}}{r_{ob}}
@@ -88,7 +88,7 @@ where $r_{ob, min}$ is a reference object ground range that is tuneable, $r_ob$ 
     \label{eq:fill_rate_bb}
 \end{equation}
 
-where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bounding box's fill rate is compared to the fill rate threshold, $t_{fr}$. In addition to the proposed rules and tuning parameters, this report adds a gaussian blurring of the sonar image and a closing operation to generate consistent landmarks. The structuring elements (SE) are both restricted to be quadratic, giving two new tuning parameters, $k_g$ and $k_c$, for the size of the quadratic gaussian structuring element and the quadratic structuring element used for the closing operation, respectively. \cref{tab:2D_tuning_rules} summarises all tunable parameters and corresponding filtering rules. 
+where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bounding box's fill rate is compared to the fill rate threshold, $t_{fr}$. In addition to the proposed rules and tuning parameters, this report adds a gaussian blurring of the sonar image and a closing operation to generate consistent landmarks. The structuring elements (SE) are both restricted to be quadratic, giving two new tuning parameters, $s_g$ and $s_c$, for the size of the quadratic gaussian structuring element and the quadratic structuring element used for the closing operation, respectively. \cref{tab:2D_tuning_rules} summarises all tunable parameters and corresponding filtering rules. 
 
 \begin{table}
     \begin{center}
@@ -96,9 +96,9 @@ where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bound
     \begin{tabular}{ll}
         \hline
         \textbf{Tunable parameter} & \textbf{Filtering rule}                            \\ \hline
-        $k_g$             & Gaussian blurring of the sonar image with SE of size $k_g$  \\ 
-        $k_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ 
-        $k_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ 
+        $s_g$             & Gaussian blurring of the sonar image with SE of size $k_g$  \\ 
+        $t_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ 
+        $s_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ 
         $n_{swaths,min}$  & $n_{swaths} > n_{swaths,min}$                               \\ 
         $n_{swaths,max}$  & $n_{swaths} < n_{swaths,max}$                               \\ 
         $r_{ob,min}$      & $A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}$           \\ 

@@ -1,8 +1,6 @@
 \chapter{Results}
 
-This chapter will present results from testing the landmark detector methods and the quality indicator on SSS data. The data was acquired in the Trondheims fjord by \textit{AURLab} using their vehicle \textit{LAUV Fridtjof} \cite{LAUVNTNU}. \cref{fig:neptus_screenshot} shows a map of parts of the Trondheim fjord and marks where the data was acquired. Further, the data was divided into a training and a test dataset. The training dataset was used to tune the landmark detectors, and the test set was used to evaluate the performance. 
-\\
-\\
+This chapter will present results from testing the landmark detector methods and the quality indicator on SSS data. The data was acquired in the Trondheims fjord by \textit{AURLab} using their vehicle \textit{LAUV Fridtjof} \cite{LAUVNTNU}. \cref{fig:neptus_screenshot} shows a map of parts of the Trondheim fjord and marks where the data was acquired. Further, the data was divided into a training and a test dataset of $4890$ and $3000$ swaths, respectively. The training dataset was used to tune the landmark detectors, and the test set was used to evaluate the performance. 
 
 \begin{figure} [h]% order of priority: h here, t top, b bottom, p page
   \centering
@@ -11,112 +9,156 @@ This chapter will present results from testing the landmark detector methods and
   \label{fig:neptus_screenshot}
 \end{figure}
 
+\cref{fig:path_sonar_colorbars} shows the normalized trainingdata. On the right is the path of the AUV shown, and in addition, is the distance traveled in the xy-plane shown along the path. Since the AUV is assumed to have an approximately constant altitude during the survey, altitude data is omitted. The same distance traveled is shown on the right in the sonar image. As the speed of the AUV changes throughout the data, so will the scaling of the distance traveled; hence, the ticks shown can be used to give some sense of the distances in the path and the sonar image but can not be used accurately to infer the distance traveled between the plots. The swath numbers on the left side start to count from $0$. They, on the other hand, scale linearly but do not have any relation to the sizes on the seafloor. On the x-axis are the bin numbers displayed, where the left part of the swath span from $0$ to $-1000$ and the right part from $0$ to $1000$. Since the mapping from bin numbers to seafloor metrics vary with altitude along the path, it is non-trivial to present in an image like this; therefore, only the bin numbers are displayed. Investigating the sonar image closely, frequently occurring artificial lines that are going across the image can be observed. The same lines can be clearly observed in \cref{fig:1D_raw_tuning_training}. The source of these lines is the transmission of the acoustic link between the AUV and a surface vessel. Further, the quality indicator is shown directly to the right of the sonar image in green-red-yellow colors, and its color scaling is shown on the far right of the figure. How it is calculated and its interpretation will be discussed below. On the right of the sonar image is the speed of the AVV in the xy-plane shown, and its color scaling is shown on the far right side. The color scaling of the quality indicator is the same throughout this report, but due to different speed ranges, the speed scaling differs between the training and test data. The color scaling for the test data is shown in \cref{fig:test_data}. 
+
 \begin{figure}
     \centering
     \includegraphics[trim=0cm 2cm 0cm 3cm, clip=true, width=1.0\textwidth]{figures/path_sonar_colorbars_training.eps}
-    \caption{todo{Caption}}
+    \caption{\textbf{Left:} The traveled path of the AUV from the training data set. In addition, the traveled distance is shown along the path. \textbf{Right:} The acquired normalized sonar image, from the training data with its corresponding quality indicator and speed in the xy-plane showed in direct relation, respectively. The color scaling of the quality indicator and speed used for all training data is shown on the far right.}
     \label{fig:path_sonar_colorbars}
 \end{figure}
 
+The main goal when tuning the landmark detector methods was to have as few possible false positives and the secondary to generate consistent landmarks. The number of false negatives was only slightly taken into consideration during tuning. This choice was made under the assumption that the geometrical properties of the landmarks will change depending on the gracing angle and azimuth angle they are observed under. Hence, will data association has a problematic starting point, to begin with, and providing it with several false positives will increase the probability that a wrong data association can be made. However, this choice is not trivial, and further work should investigate how the rate of false positives and false negatives affects the data association.
+
 \section{Side scan sonar quality indicator}
 
-The quality indicator is a measure that tries to say something about the quality of the SSS data, a measure that should be lower when turning due to overlapping swaths. \cref{fig:path_and_quality_ind} shows the result of testing the quality indicator. The left side is a plot of the path of the AUV in the xy-plane. Since the AUV is assumed to have an approximately constant altitude during the survey, altitude data is omitted. Further, the quality indicator is overlayed as the color of the path. As expected, the data quality decreases when turning due to swath overlapping. In addition, the traveled distance in the xy-plane is also shown along the path. The acquired sonar data traveling along the path is plotted on the right side, and the image's bar on the right side is the quality indicator. At a traveled distance of around $60 m$, two banana-like shadows appear. These could typically be examples of the anomalies and degradation of quality experienced when turning during a sonar survey. 
+The quality indicator is a measure that tries to say something about the quality of the SSS data, a measure that should be lower when turning due to overlapping swaths. \cref{fig:path_and_quality_ind} shows the result of testing the quality indicator on the training data. The left side is a plot of the path of the AUV in the xy-plane. Further, the quality indicator is overlayed as the color of the path. As expected, the data quality decreases when turning due to swath overlapping. In addition, the traveled distance in the xy-plane is also shown along the path. The acquired sonar data traveling along the path is plotted on the right side, and the image's bars on the right are the quality indicator and the speed of the AUV. The Dashed horizontal lines in the image are displayed to show approximately in which part of the image the poor quality occurs. At a traveled distance of around $60 m$, two banana-like shadows appear. These could typically be examples of the anomalies and degradation of quality experienced when turning during a sonar survey. 
 
 \begin{figure} % order of priority: h here, t top, b bottom, p page
   \centering
   \includegraphics[trim=0cm 2cm 5.5cm 3cm, clip=true, width=0.9\textwidth]{figures/path_and_quality_indicator.eps}
-  \caption[Path with quality indicator overlayed]{\textit{Left:} The traveled path in the xy-plane of the AUV. The path's color corresponds to the quality indicator along the path, and the traveled distance is also shown. \textit{Right:} The right figure shows the sonar image acquired from moving along the path and the corresponding quality indicator.}
+  \caption[Path with quality indicator overlayed]{\textbf{Left:} The traveled path in the xy-plane of the AUV. The path's color corresponds to the quality indicator along the path, and the traveled distance is also shown. \textbf{Right:} The right figure shows the sonar image acquired from moving along the path and the corresponding quality indicator.}
   \label{fig:path_and_quality_ind}
 \end{figure}
 
 \section{1D Landmark Detector using Peak Detection}
 
-The 1D landmark detector has four tuning parameters, the threshold $t$, smoothing parameter $s$, and the kernel size of the quadratic kernels used for the opening and closing operators. \cref{fig:1D_norm_tuning_training} shows the results from tuning, with three different thresholds represented. The middle threshold of $t = 1550$ was chosen. Even though there is not much difference between the different thresholds, there are some that make the selected threshold preferable over the other. For the threshold of $t = 1500$, an echo landmark on the left swath at around swath number $3100$ is missing compared to the chosen threshold. For $t = 1600$, two extra landmarks in the left swath around swath number $1000$ and $1200$ are detected. The landmark at swath number $1000$ is a real landmark. However, the detected landmark around swath number $1200$ is only partially detected and is therefore unwanted. A smoothing parameter of $s = \num{1e-5}$ was chosen to filter out enough noise not to get false positives. As the figure shows, there are not a lot of false positives, but to a cost of filtering out a large fraction of the details. To further filter the landmarks, the quadratic kernel used for the closing operation was chosen with a size of $10^2$, and the size of the kernel for the opening operation was chosen as $15^2$, such that the detected landmarks are both consistent and that narrow landmarks are removed, respectively.  
+The 1D landmark detector has two tuning parameters, the threshold filtering the shadows and echoes $E$ and the smoothing parameter $p$ for the cubic smoothing spline smoothing the data. \cref{fig:1D_raw_tuning_training} shows the results from tuning, with three different thresholds represented. The middle threshold of $E = 17$ was chosen. Even though there is not much difference between the different thresholds, there are some that make the selected threshold preferable over the other. For the threshold of $E = 16$, the clear shadow landmark around swath number $1300$ in the left swath loses some consistency compared to the chosen threshold of $E = 17$. For $E = 18$, two extra echo landmarks in the right swath around swath number $500$ were detected. The two extra detected landmarks are part of a larger landmark and are, together with the two connected shadow landmarks, an inconsistent detection of the landmark. A smoothing parameter of $p = \num{1e-5}$ was chosen to filter out enough noise not to get false positives. Further, some false positives are detected, but all of these are in connection to the acoustic communication with a surface vessel and are therefore not considered. 
+
+% The 1D landmark detector has four tuning parameters, the threshold $t$, smoothing parameter $s$, and the kernel size of the quadratic kernels used for the opening and closing operators. \cref{fig:1D_norm_tuning_training} shows the results from tuning, with three different thresholds represented. The middle threshold of $t = 1550$ was chosen. Even though there is not much difference between the different thresholds, there are some that make the selected threshold preferable over the other. For the threshold of $t = 1500$, an echo landmark on the left swath at around swath number $3100$ is missing compared to the chosen threshold. For $t = 1600$, two extra landmarks in the left swath around swath number $1000$ and $1200$ are detected. The landmark at swath number $1000$ is a real landmark. However, the detected landmark around swath number $1200$ is only partially detected and is therefore unwanted. A smoothing parameter of $s = \num{1e-5}$ was chosen to filter out enough noise not to get false positives. As the figure shows, there are not a lot of false positives, but to a cost of filtering out a large fraction of the details. To further filter the landmarks, the quadratic kernel used for the closing operation was chosen with a size of $10^2$, and the size of the kernel for the opening operation was chosen as $15^2$, such that the detected landmarks are both consistent and that narrow landmarks are removed, respectively.  
 
 \begin{figure}  % order of priority: h here, t top, b bottom, p page
   \centering
   \includegraphics[width=1.0\textwidth]{figures/1D_raw_tuning_training.eps}
-  \caption[Results of tuning threshold of the 1D method]{Results from tuning the thresholds of the 1D method with three different thresholds. Shadow landmarks are shown in green and echo landmarks are in purple. The rightmost bar on the right side is the vehicle's speed, where darker colors represent slower speeds. The second bar is the quality indicator.}
-  % Parameters used: smoothing e-5, closing kernel (10,10), opening kernel (15,15)
-  \label{fig:1D_norm_tuning_training}
+  \caption[Results of tuning threshold of the 1D method]{Results from tuning the thresholds of the 1D method with three different thresholds on un-normalized data. The left image shows the unnormalized training data without any landmark detection. The three other images show the results using a threshold $E = 16$, $E = 17$, and $E = 18$. All images are smoothed with a smoothing parameter of $p = \num{1e-5}$. Shadow landmarks are shown in green and echo landmarks are in pink. The two bars on the right show the quality indicator and the vehicle's speed.}
+  % Parameters used: smoothing e-5
+  \label{fig:1D_raw_tuning_training}
 \end{figure}
 
-\begin{figure} % order of priority: h here, t top, b bottom, p page
+\begin{figure}[ht]% order of priority: h here, t top, b bottom, p page
      \centering
-    \begin{subfigure}[t]{0.339\textwidth}
+    \begin{subfigure}[t]{0.3051\textwidth}
          \centering
          \includegraphics[trim=14cm 0cm 19.7cm 0cm, clip=true, width=\textwidth]{figures/1D_raw_result_training.eps}
-         % E = 17
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[t]{0.277\textwidth}
+     \hspace{0cm}
+     \begin{subfigure}[t]{0.2493\textwidth}
          \centering
          \includegraphics[trim=16.4cm 0cm 19.7cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_result_training.eps}
-         % E = 1450
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[t]{0.371\textwidth}
+     \hspace{0cm}
+     \begin{subfigure}[t]{0.3339\textwidth}
          \centering
          \includegraphics[trim=16.4cm 0cm 16.1cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_morph_result_training.eps}
-         % E = 17
      \end{subfigure}
-        \caption{}
-        \label{}
+        \caption{\textbf{Left:} Result from tuning the 1D landmark detector on unnormalized training data with threshold $E = 17$. \textbf{Middle:} Result from tuning the 1D landmark detector on normalized training data with threshold $E = 1450$. \textbf{Right:} Results from tuning the 1D landmark detector on normalized training data with threshold $E = 1450$ and sizes for the quadratic structuring element of the closing and opening operation of $s_c = 10^2$ and $s_o = 15^2$, respectively. All results use a smoothing parameter of $p = \num{1e-5}$. The shadow landmarks are pink, and the echo landmarks are green.}
+        \label{fig:1D_tuning_results}
 \end{figure}
+
+As suggested in \cite{Al-Rawi2017LandmarkImages}, using normalized data and morphological operators to filter out thin landmarks were tested, and \cref{fig:1D_tuning_results} shows the results. As discussed above, the left image results from using unnormalized training data with a threshold of $E = 17$. The middle image is the result of testing the method on normalized data. Using the same considerations as when tuning the 1D landmark detector on unnormalized data, a threshold of $E = 1450$ was found. Again, all false positives are considered to originate from acoustic communication. The false positives are all echo landmarks and appear in pairs, one on the left side and one on the right side of the swath, and can be found approximately in swath numbers $1300$, $2000$, and $4200$. In addition, a few landmarks are inconsistently detected. On the right side, the results of applying a closing operation followed by an opening operation with quadratic structuring elements of sizes $s_c = 10^2$ and $s_o = 15^2$ on the middle image are shown. The sizes of the structuring elements were found by testing different sizes and choosing the ones that generated results most aligned with the tuning goals. All false positives are removed, and the resulting landmarks are mostly consistent. Both the rightmost shadow landmark and the shadow landmark at around swath number $1200$ are part of a larger landmark and are inconsistently detected. All results used a smoothing parameter of $p = \num{1e-5}$. \cref{tab:1D_parameters} summarizes the parameters used. 
+
+There is not much difference in comparing the left and middle images using unnormalized and normalized data. Using normalized data has more false positives due to acoustic communication and slightly more inconsistent landmarks, but using unnormalized data generates more thin unwanted landmarks. Using morphological operators on normalized data gives significantly better results and is therefore chosen to compare against the 2D landmark detector.
+
+\begin{table}
+    \caption{Resulting parameters from tuning the 1D landmark detector on unnormalized and normalized training data.}
+    \centering
+    \begin{tabular}{cccc}
+        \hline
+        \textbf{Tunable parameter} & \textbf{Unnormalized} & \textbf{Normalized} & \textbf{Normalized with morph. operators} \\ \hline
+        $E$                        & $17$                  & $1450$              & $1450$                                    \\
+        $p$                        & $\num{1e-5}$          & $\num{1e-5}$        & $\num{1e-5}$                              \\
+        $s_c$                      & $-$                   & $-$                 & $10^2$                                    \\
+        $s_o$                      & $-$                   & $-$                 & $15^2$                                    \\ \hline
+    \end{tabular}
+    \label{tab:1D_parameters}
+\end{table}
 
 \section{2D Landmark Detector using Expert Rules}
 
-The 2D landmark detector has a total of six parameters to tune. The parameter $d_{ob min}$ was set to $3 m $, as in \cite{Leblond2019SonarProject}. \cref{fig:2D_tuning_intensity_thres} shows the result from tuning the intensity threshold with three different intensity thresholds displayed. The intensity threshold of $t_i = 0.85$ was chosen. An intensity threshold of $t_i = 0.8$ results in few false positives or noise in the detected landmark candidates. However, landmark candidates without a strong shadow are not detected consistently. Several large landmark candidates either have holes or are not consistently detected. An intensity threshold of $t_i = 0.9$ results in much more noise in the detected landmark candidates, which is unwanted. An intensity threshold of $t_i = 0.85$ produces consistent landmark candidates and an acceptable amount of noise. 
+The 2D landmark detector has a total of six parameters to tune. The parameter $d_{ob min}$ was set to $3 m $, as in \cite{Leblond2019SonarProject}. \cref{fig:2D_tuning_intensity_thres} shows the result from tuning the intensity threshold with three different intensity thresholds displayed. The intensity threshold of $t_i = 0.9$ was chosen. An intensity threshold of $t_i = 0.85$ results in less noise in the detected landmark candidates than the chosen threshold of $t_i = 0.9$. However, landmark candidates without a strong shadow are not detected consistently. Several large landmark candidates either have holes or are not consistently detected. An intensity threshold of $t_i = 0.95$ results in much more noise in the detected landmark candidates, which is unwanted. An intensity threshold of $t_i = 0.9$ produces consistent landmark candidates and an acceptable amount of noise. 
 
-\begin{figure}  % order of priority: h here, t top, b bottom, p page
+\begin{figure}[ht]  % order of priority: h here, t top, b bottom, p page
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/2D_tuning_threshold_training.eps}
-  \caption[Results of tuning intensity threshold the 2D method]{Results from tuning the intensity threshold of the 2D method. The bar on the right side shows the speed of the AUV. The bar inside the speed shows the quality indicator. }
+  \includegraphics[trim=0cm 1.6cm 0cm 1.4cm, clip=true, width=0.9\textwidth]{figures/2D_tuning_threshold_training.eps}
+  \caption[Results of tuning intensity threshold the 2D method]{Results from tuning the intensity thresholds of the 2D method with three different thresholds on normalized data. The left image shows the normalized training data without any thresholding. The three other images show the results using an intensity threshold $t_i = 0.85$, $t_i = 0.9$, and $t_i = 0.9$. All images are smoothed with a smoothing parameter of $p = \num{1e-2}$. Landmark candidates are shown in green. The two bars on the right show the quality indicator and the vehicle's speed.}
   \label{fig:2D_tuning_intensity_thres}
 \end{figure}
 
-\cref{fig:2d_tuning_paramaters_training} shows the results of tuning the last four parameters. The green landmark candidates are the landmarks filtered out in the corresponding step of the pipeline, and the purple landmarks are the kept landmarks. The leftmost image shows the sonar image. The second leftmost image results from filtering landmark candidates by along-track height. The landmark candidates are generated by applying intensity thresholding on the sonar image. Large landmarks are chosen to be filtered out because it is more difficult to detect them consistently, and therefore a more conservative choice is made. In addition, this step filters out much of the noise in the landmark candidates. The third image shows the result of applying the landmark area filtering. The parameter $A_{min} = 100$ was chosen to filter out the smallest landmarks. The fourth image shows the result of filtering out landmarks based on their fill rate of the rectangular bounding box encapsulating them. The fill rate limit was set to $r_{fr} = 0.3$ to filter out the thin and non-consistent landmarks. The last image shows the resulting landmarks.
-
-\begin{figure}
-    \centering
-    \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=1.0\textwidth]{figures/2D_tuning_parameters_training.eps}
-    \caption[Results from testing the 2D landmark detector]{Results from running the 2D landmark detector on the test data}
-     \label{fig:2d_tuning_paramaters_training}
-     % Height 50-150, Area 100 FR 0.3 int thres 0.9
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=1.0\textwidth]{figures/2D_filtered_tuning_parameters_training.eps}
-    \caption[]{}
-     \label{}
-     % Height 50-150, Area 100 FR 0.3 int thres 0.85 no gaussian morph size 10
-\end{figure}
-
-\section{Landmark detection on test data}
-
-Both landmark detector methods were run on the test dataset to evaluate the performance of the landmark detectors with the chosen tuning parameters. \cref{fig:test_data} shows the test data. The result from the 1D landmark detector is shown in \cref{fig:1D_norm_result_test}. No false positives are detected; however, several landmarks are only partially detected. It is also worth noting that only one echo landmark is detected. \cref{fig:2D_result_single_test} shows the result from the 2D landmark detector. The conservative tuning is evident in the result, as several large, thin landmarks at the top of the image are not detected. Further, the thin landmarks that are detected are only partially detected. 
+\cref{fig:2d_tuning_paramaters_training} shows the results of tuning the last four parameters. The green landmark candidates are the landmarks filtered out in the corresponding step of the pipeline, and the pink landmarks are the kept landmarks. The leftmost image shows the sonar image. The second leftmost image results from filtering landmark candidates by how many swaths they are a part of, i.e., the height of the landmark candidate in the sonar image. The landmark candidates are generated by applying intensity thresholding on the sonar image. Large landmarks are chosen to be filtered out because it is more difficult to detect them consistently, and therefore a more conservative choice is made. The minor landmarks were also filtered out, resulting in $n_{swaths, min} = 50 \; swaths$ and $n_{swaths, max} = 150 \; swaths$. In addition, this step filters out much of the noise in the landmark candidates. The third image shows the result of applying the landmark area filtering. The parameter $A_{min} = 100 \;pixels^2$ was chosen to filter out the minor landmarks left from the height filtering. The fourth image shows the result of filtering out landmarks based on their fill rate of the rectangular bounding box encapsulating them. The fill rate limit was set to $t_{fr} = 0.3$ to filter out the thin and non-consistent landmarks. The last image shows the resulting landmarks.
 
 \begin{figure} % order of priority: h here, t top, b bottom, p page
      \centering
-    \begin{subfigure}[t]{1.0\textwidth}
+    \begin{subfigure}[t]{0.975\textwidth}
+        \centering
+        \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=\textwidth]{figures/2D_tuning_parameters_training.eps}
+        \caption{Results from tuning the 2D method on normalized data. An intensity threshold of $t_i = 0.9$ generates the landmark candidates used.}
+        \label{fig:2d_tuning_paramaters_training}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.975\textwidth}
+        \includegraphics[trim=0cm 3cm 0cm 2.8cm, clip=true, width=1.0\textwidth]{figures/2D_filtered_tuning_parameters_training.eps}
+        \caption{Results from tuning the 2D method on normalized data, using a closing operation to filter the landmark candidates. An intensity threshold of $t_i = 0.85$ followed by a closing operation with a quadratic SE of size $s_c = 10^2$ generates the landmark candidates used.}
+        \label{fig:2d_tuning_paramaters_w_filtering_training}
+     \end{subfigure}
+        \caption{Results from tuning the 2D method on normalized data. In both figures, the left image shows the normalized training data without any detection. The four other images show the different steps in the pipeline, applying the different thresholds to the landmark candidates. The green landmark candidates are the landmarks filtered out in the corresponding step of the pipeline, and the pink landmarks are the kept landmarks. The two bars on the right show the quality indicator and the vehicle's speed.}
+        %Both figures use $n_{swaths, min} = 50 \; swaths$, $n_{swaths, max} = 150 \; swaths$, $A_{min} = 100 \;pixels^2$, and $t_{fr} = 0.3$ and all images are smoothed with a smoothing parameter of $p = \num{1e-2}$. 
+\end{figure}
+
+Looking at the height filtering step in \cref{fig:2d_tuning_paramaters_training}, it is evident that two of the inconsistently detected landmarks (landmark number two and three from the top) are so because they are split by artifacts coming from acoustic communication. Drawing from the 1D landmark detector, a closing operation with a quadratic SE of size $s_c = 10^2$ is added between the intensity threshold step and the height filtering. \cref{fig:2d_tuning_paramaters_w_filtering_training} shows the tuning of the pipeline. Due to the more consistent landmark candidates, the amount of noise could be reduced by reducing the intensity threshold to $t_i = 0.85$. The other parameters were not changed. The two landmarks inconsistently detected earlier are not detected and rightly removed due to their height. Further, two new landmarks are detected. 
+
+The resulting parameters are shown in \cref{tab:2D_parameters}. Comparing with and without morphological operators, using the closing operation helps with consistency; therefore, this is the preferred method for comparing with the 1D landmark detector. 
+
+\begin{table} [ht]
+    \caption{Resulting parameters from tuning the 2D landmark detector on normalized training data.}
+    \centering
+    \begin{tabular}{ccc}
+        \hline
+        \textbf{Tunable parameter} & \textbf{Normalized} & \textbf{Normalized with morph. operators} \\ \hline
+        $t_i$                      & $0.9$               & $0.85$                                    \\
+        $s_c$                      & $-$                 & $10^2$                                    \\
+        $n_{swaths, min}$          & $50 \; swaths$      & $50 \; swaths$                            \\
+        $n_{swaths, max}$          & $150\; swaths$      & $150 \; swaths$                           \\
+        $A_{min}$                  & $100 \; pixels^2$   & $100 \; pixels^2$                         \\
+        $t_{fr}$                   & $0.3$               & $0.3$                                     \\ \hline
+    \end{tabular}
+    \label{tab:2D_parameters}
+\end{table}
+
+\newpage
+
+\section{Landmark detection on test data}
+
+Both landmark detector methods were run on the test dataset to evaluate the performance of the landmark detectors with the chosen tuning parameters. \cref{fig:test_data} shows the test data. The result from the 1D landmark detector is shown in \cref{fig:1D_norm_result_test}. No false positives are detected; however, several landmarks are only partially detected. It is also worth noting that only one echo landmark is detected. \cref{fig:2D_result_single_test} shows the result from the 2D landmark detector. The conservative tuning is evident in the result, as several large, thin landmarks at the top of the image are not detected. Further, the two thin landmarks that are detected are only partially detected. 
+
+\begin{figure} [hb] % order of priority: h here, t top, b bottom, p page
+     \centering
+    \begin{subfigure}[t]{0.9\textwidth}
          \centering
-         \includegraphics[trim=0cm 3cm 0cm 4cm, clip=true, width=\textwidth]{figures/path_sonar_colorbars_test.eps}
+         \includegraphics[trim=0cm 4cm 0cm 4.5cm, clip=true, width=\textwidth]{figures/path_sonar_colorbars_test.eps}
          \caption{Test data}
          \label{fig:test_data}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.44\textwidth}
          \centering
-         \includegraphics[trim=11cm 0cm 12cm 0cm, clip=true, width=\textwidth]{figures/1D_norm_result_test.eps}
-         \caption{1D landmark detector. Green is echo landmarks, and purple is shadow landmarks.}
+         \includegraphics[trim=9cm 1cm 10cm 1cm, clip=true, width=\textwidth]{figures/1D_norm_result_test.eps}
+         \caption{1D landmark detector. Green is echo landmarks, and pink is shadow landmarks.}
          \label{fig:1D_norm_result_test}
      \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.44\textwidth}
          \centering
-         \includegraphics[trim=11cm 0cm 12cm 0cm, clip=true, width=\textwidth]{figures/2D_result_single_test.eps}
-         \caption{2D landmark detector. Purple is the detected landmarks}
+         \includegraphics[trim=9cm 1cm 10cm 1cm, clip=true, width=\textwidth]{figures/2D_result_single_test.eps}
+         \caption{2D landmark detector. Pink is the detected landmarks}
          \label{fig:2D_result_single_test}
      \end{subfigure}
         \caption{Results from running landmark detectors on test data}
