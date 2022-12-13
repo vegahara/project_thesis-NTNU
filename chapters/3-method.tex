@@ -4,10 +4,10 @@ This chapter will present the two landmark detector methods and their inner work
 
 \section{Quality Indicator for Side Scan Sonar Data}
 
-The novel quality indicator calculates the overlapping of consecutive swaths, considering the ground range at maximum sensor opening. The motivation behind the quality indicator is to easily be able to pick out the areas of a sonar image where the turning of the AUV has affected the quality of the data, and anomalies and garbage data are expected. \cref{fig:r_eff} shows the SSS configuration, where $\theta$ is the mounting angle for the transducers from the horizontal line, $\alpha$ is the sensor opening, $h$ is the AUVs altitude above the seafloor, and $r_{g, max}$ is the maximum ground range. Because of varying altitudes, $h$, the maximum sonar ground range does not represent the range where we expect to find meaningful data. The effective ground range on the other side, $r_{g, eff}$, is a better representation and is given by:
+The novel quality indicator calculates the overlapping of consecutive swaths, considering the ground range at maximum sensor opening. The motivation behind the quality indicator is to easily be able to pick out the areas of a sonar image where the turning of the AUV has affected the quality of the data, and anomalies and garbage data are expected. \cref{fig:r_eff} shows the SSS configuration, where $\theta$ is the mounting angle for the transducers from the horizontal line, $\alpha$ is the sensor opening, $h$ is the AUVs altitude above the seafloor, and $r_{g, max}$ is the maximum ground range. Because of varying altitudes, $h$, the maximum sonar ground range does not represent the range where we expect to find meaningful data. The effective ground range on the other side, $r_{g, eff}$, is a better representation and is given by
 
 \begin{equation}
-    r_{g,eff} = \frac{h}{tan(\theta - \frac{\alpha}{2})}
+    r_{g,eff} = \frac{h}{tan(\theta - \frac{\alpha}{2})}.
     \label{eq:r_g_eff}
 \end{equation}
 
@@ -18,20 +18,20 @@ The novel quality indicator calculates the overlapping of consecutive swaths, co
     \label{fig:r_eff}
 \end{figure}
 
-\cref{fig:quality_ind} show the AUV at two consecutive timesteps, where $\Delta \psi$ is the absolute change in heading between the two timesteps (positive for both left and right turn), $\Delta d$ the distance traveled in the xy-plane between the two timesteps. $r_{g, max}$, $r_{g, eff}$ still the maximum and effective ground range, respectivley. $l$ is the distance between the AUV and the point on the swath where the next swath is crossing (could be at infinity in case of $\Delta \psi = 0$) and is given by:
+\cref{fig:quality_ind} show the AUV at two consecutive timesteps, where $\Delta \psi$ is the absolute change in heading between the two timesteps (positive for both left and right turn), $\Delta d$ the distance traveled in the xy-plane between the two timesteps. $r_{g, max}$, $r_{g, eff}$ still the maximum and effective ground range, respectivley. $l$ is the distance between the AUV and the point on the swath where the next swath is crossing (could be at infinity in case of $\Delta \psi = 0$) and is given by
 
 \begin{equation}
-    l = \frac{\Delta d}{tan(\Delta \psi)}
+    l = \frac{\Delta d}{tan(\Delta \psi)}.
     \label{eq:l_qi}
 \end{equation}
 
-Using the above results, the following quality indicator is proposed:
+Using the above results, the following quality indicator is proposed
 
 \begin{equation}
-    q = \frac{1}{2}(tanh( \,k\, (\frac{l}{r_{g, eff}} - \frac{1}{2})) + 1)
+    q = \frac{1}{2}[tanh( \,k\, [\frac{l}{r_{g, eff}} - \frac{1}{2}]) + 1]
 \end{equation}
 
-where $k$ is a tuning parameter used to tune the sensitivity of the quality indicator. 
+where $k$ is a tuning parameter, set to $k = 6$, used to tune the sensitivity of the quality indicator. 
 
 \begin{figure}
     \centering
@@ -43,7 +43,7 @@ where $k$ is a tuning parameter used to tune the sensitivity of the quality indi
 \section{1D Landmark Detector using Peak Detection}
 
 The 1D landmark detector, as in \cite{Al-Rawi2017LandmarkImages,} does peak detection in scan lines to find shadows and echoes and filter out non-significant echoes and shadows using a simple threshold. In this context, peak detection finds all local maxima in the swath. Landmarks are detected in one swath at a time, and peak detection is performed separately for the left and right parts of the swath. The first step for detecting meaningful peaks is to perform a smoothing of the swath, which is done by using a cubic spline. Next, the echoes are detected by detecting all peaks in the swath, and the shadows are detected by flipping the swath and detecting all peaks in the flipped signal. In addition to the position of all the peaks, the prominence and the width half-prominence are found. \cref{fig:1D_swath_w_landmarks} shows the result of detecting the echoes and shadows using peak detection. In addition, the peak of the FBR to the left swath is shown with its prominence and half-prominence width.
-Further, all the shadows and echoes are filtered to detect landmarks. The first step is to remove the echo from the FBR and the shadow from the blind zone, as these are not generated from a landmark. These are the two most significant echoes and shadows in \cref{fig:1D_swath_w_landmarks}. Next, all echoes and shadows are filtered by a simple threshold given by:
+Further, all the shadows and echoes are filtered to detect landmarks. The first step is to remove the echo from the FBR and the shadow from the blind zone, as these are not generated from a landmark. These are the two most significant echoes and shadows in \cref{fig:1D_swath_w_landmarks}. Next, all echoes and shadows are filtered by a simple threshold given by
 
 \begin{equation}
     E = \frac{2\times width}{prominence}
@@ -61,34 +61,34 @@ In \cite{Al-Rawi2017LandmarkImages}, un-normalized SSS data is used, but the use
 
 \section{2D Landmark Detector using Expert Rules}
 
-The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and shape. The first step is to perform an intensity thresholding on all the pixels to find shadows. The suggested intensity threshold is:
+The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and shape. The first step is to perform an intensity thresholding on all the pixels to find shadows. The suggested intensity threshold is
 
 \begin{equation}
     t_i = \frac{\Bar{I(x,y)}}{2}
     \label{eq:orginal_int_thres}
 \end{equation}
 
-where $\Bar{I(x,y)}$ is the average pixel intensity in the sonar image. However, this threshold produced close to no shadows from the data, so a new intensity threshold is suggested:
+where $\Bar{I(x,y)}$ is the average pixel intensity in the sonar image. However, this threshold produced close to no shadows from the data, so a new intensity threshold is suggested
 
 \begin{equation}
-    t_i = (\Bar{I(x,y)} - I(x,y)_{min}) t_i + I(x,y)_{min} 
+    t_i = [\Bar{I(x,y)} - I(x,y)_{min}] k_i + I(x,y)_{min} 
 \end{equation}
 
-where $I(x,y)_{min}$ is the average over the $100$ smallest pixels, which is done to be more robust against outliers in the data. $t_i$ is a tuning parameter ranging from $0$ to $1$. Using the result from the intensity thresholding, a series of filtering rules are applied to filter out shadows. First, the shadows get filtered based on how many swaths they span over, where both minimum and maximum height filtering is applied. Secondly, filtering based on the area of the shadows in $pixels^2$ is applied. To account for how the grazing angle affects the shadows, the area is corrected by
+where $I(x,y)_{min}$ is the average over the $100$ pixels with the lowest intensity, which increases robustness. $k_i$ is a tuning parameter ranging from $0$ to $1$. Using the result from the intensity thresholding, a series of filtering rules are applied to filter out shadows. First, the shadows get filtered based on how many swaths they span over, where both minimum and maximum height filtering is applied. Second, filtering based on the area of the shadows in $pixels^2$ is applied. To account for how the grazing angle affects the shadows, the area is corrected by
 
 \begin{equation}
-    A_{corr} = A_s \times r = A \times \frac{r_{ob,min}}{r_{ob}}
+    A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}
     \label{eq:corrected_area}
 \end{equation}
 
-where $r_{ob, min}$ is a reference object ground range that is tuneable, $r_ob$ is the ground range to the object, and $A_s$ is the area of the shadow in $pixels^2$. The last step is to filter the shadows based on how much of the bounding box that surrounds them that are filled, where the fraction of filled is given by
+where $r_{ob, min}$ is a reference object ground range that is tuneable, $r_{ob}$ is the ground range to the object, and $A_s$ is the area of the shadow in $pixels^2$. The last step is to filter the shadows based on how much of the bounding box that surrounds them that are filled, where the fraction of filled is given by
 
 \begin{equation}
     \frac{A_s}{A_{bb}}
     \label{eq:fill_rate_bb}
 \end{equation}
 
-where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bounding box's fill rate is compared to the fill rate threshold, $t_{fr}$. In addition to the proposed rules and tuning parameters, this report adds a gaussian blurring of the sonar image and a closing operation to generate consistent landmarks. The structuring elements (SE) are both restricted to be quadratic, giving two new tuning parameters, $s_g$ and $s_c$, for the size of the quadratic gaussian structuring element and the quadratic structuring element used for the closing operation, respectively. \cref{tab:2D_tuning_rules} summarises all tunable parameters and corresponding filtering rules. 
+where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bounding box's fill rate is compared to the fill rate threshold, $t_{fr}$. In addition to the proposed rules and tuning parameters, this report adds a closing operation to generate consistent landmarks. The structuring element (SE) is restricted to be quadratic, giving a new tuning parameter, $s_c$, for the size of the quadratic structuring element used for the closing operation. \cref{tab:2D_tuning_rules} summarises all tunable parameters and corresponding filtering rules. 
 
 \begin{table}
     \begin{center}
@@ -96,8 +96,7 @@ where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bound
     \begin{tabular}{ll}
         \hline
         \textbf{Tunable parameter} & \textbf{Filtering rule}                            \\ \hline
-        $s_g$             & Gaussian blurring of the sonar image with SE of size $k_g$  \\ 
-        $t_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ 
+        $k_i$             & $I(x,y) < (\Bar{I(x,y)} - I(x,y)_{min}) k_i + I(x,y)_{min}$ \\ 
         $s_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ 
         $n_{swaths,min}$  & $n_{swaths} > n_{swaths,min}$                               \\ 
         $n_{swaths,max}$  & $n_{swaths} < n_{swaths,max}$                               \\ 
@@ -112,9 +111,16 @@ where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bound
 
 \section{Qualitative comparison}
 
-This report makes a qualitative comparison of the landmark detectors' results to compare them against each other. To make a meaningful comparison, some grounds for comparison must be set. First and foremost, an understanding of what part of a sonar image is considered a landmark and what is just considered background. Next, an understanding of what makes up consistent landmarks is also essential. Lastly, some grounds for comparing the tuning process have to be defined. 
+This report makes a qualitative comparison of the landmark detectors' results to compare them against each other. To make a meaningful comparison, some grounds for comparison must be set. First and foremost, an understanding of what part of a sonar image is considered a landmark and what is just considered background is needed. Next, an understanding of what makes up consistent landmarks is also essential. Lastly, some grounds for comparing the tuning process have to be defined. 
 
-To compare the methods, an understanding of what parts of the sonar image are actual landmarks and what properties are consistent with a landmark. Firstly, a division into echo and shadow landmarks has to be done. Echoes are typically generated by objects standing out from the seafloor, reflecting more sound and generating a more significant echo intensity in the sonar image. On the other hand, shadows are generated by occlusion, either by objects on the seafloor or simply by holes at the seafloor, and give dark areas in the sonar image. Whenever an echo landmark is detected, it is also expected to detect a shadow landmark. This is because the object generating the increased echo is expected to occlude some parts of the ultrasonic pulse and generate a shadow. 
+To compare the methods, understanding what parts of the sonar image are actual landmarks and what properties are consistent with a landmark is needed. Firstly, a division into echo and shadow landmarks has to be done. Echoes are typically generated by objects standing out from the seafloor, reflecting more sound and generating a more significant echo intensity in the sonar image. On the other hand, shadows are generated by occlusion, either by objects on the seafloor or simply by holes at the seafloor, and give dark areas in the sonar image. In the context of SLAM, landmarks that are re-detectable with different gracing angles and with a different heading angle are of interest, and this should be the primary objective. However, it is not trivial to point out the properties such landmarks will have. \cref{fig:object_shadow} shows the same object being observed with two different gracing angles, $\theta_{s,1}$ and $\theta_{s,2}$. The shadow sizes and the grey unknown areas are inverse-proportional to the gracing angle. As the grey areas are unobserved, the backside of the landmark is unknown, and there could even be a second, smaller landmark behind the detected landmark. Since the backside is unknown, it is hard to make assumptions about how the echo the landmark will generate. However, inferring this to how the shadow appears is easier since the front is known. In that sense, shadow landmarks are preferred over echo landmarks. Further, small landmarks are unwanted because they can easily be occluded or mistaken by noise. Large landmarks are also unwanted. This is because they might be only partially observed in one situation and then fully observed in the next, making data association hard. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/object_shadow.drawio.pdf}
+    \caption{The figure shows how the same object, observed with two different gracing angles, generates different-sized shadows and that both the grey unknown areas and the shadow sizes are inverse-proportional to the gracing angle.}
+    \label{fig:object_shadow}
+\end{figure}
 
 Landmark consistency is an essential qualitative measure and tells to what extent a landmark detection method can detect a landmark as one coherent landmark or several minor landmarks. The opposite is when what appears as one consistent landmark in the sonar image is either only detected partially or as several minor landmarks. The problem with partially detected or split landmarks is that small changes in how the landmark is observed can result in a landmark with a widely different form or size being detected. Further, this will lead to problems for the data association. 
 

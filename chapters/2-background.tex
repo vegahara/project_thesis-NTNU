@@ -4,26 +4,7 @@ This chapter will present the relevant background for this report.
 
 \section{Simultaneous Localization And Mapping}
 
-Simultaneous localization and mapping (SLAM) is a procedure of acquiring a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform on the same map, and it is one of the key enabling technologies of mobile robot navigation \cite{Stachniss2016SimultaneousMapping}. More technically, SLAM is the procedure of estimating the sequence of robot poses, or the robot path, given as  
-
-\begin{equation}
-    X_t = \{x_o, x_1, x_2,...,x_t\},
-    \label{eq:path}
-\end{equation}
-
-where $t$ denotes the time. The robot uses different sensors and/or motion models to obtain its odometry, the relative motion between time $t-1$ and $t$, given by
-
-\begin{equation}
-    U_t = \{u_o, u_1, u_2,...,u_t\}.
-    \label{eq:odom}
-\end{equation}
-
-Further, the robot uses sensors to sense the environment and the objects, or landmarks, in the environment. Let the pose of landmark $n$ be denoted $l_n$. Then, the robot measures the relative position between its pose, $x_t$, and the landmark poses of the landmarks in map $m$. Let the vector containing all landmark measurements at time $t$ be denoted $z_t$. The measurement of landmarks is then given by
-
-\begin{equation}
-    Z_t = \{z_0, z_1, z_2,...,z_t\}.
-    \label{eq:landmark_measurements}
-\end{equation}
+Simultaneous localization and mapping (SLAM) is a procedure of acquiring a map of an unknown environment as a mobile platform explores it and, at the same time, localizes the mobile platform on the same map, and it is one of the key enabling technologies of mobile robot navigation \cite{Stachniss2016SimultaneousMapping}. More technically, SLAM is the procedure of estimating the sequence of robot poses, or the robot path, $X_t = \{x_o, x_1, x_2,...,x_t\}$, where $t$ denotes the time. The robot uses different sensors and/or motion models to obtain its odometry, $U_t = \{u_o, u_1, u_2,...,u_t\}$, describing the relative motion between time $t-1$ and $t$. Further, the robot uses sensors to sense the environment. The environment can be either modeled by volumetric or feature-based models. The volumetric model has a high enough resolution that allows for photo-realistic reconstruction and is a high-dimensional problem. Feature-based or landmark-based models are of a lower dimension and tend to be faster. Since this report tests landmark detectors, only feature-based SLAM is treated further. Let the pose of landmark $n$ be denoted $l_n$. Then, the robot measures the relative position between its pose, $x_t$, and the landmark poses of the landmarks in map $m$. Let the vector containing all landmark measurements at time $t$ be denoted $z_t$. The measurement of landmarks is then given by $Z_t = \{z_0, z_1, z_2,...,z_t\}$.
 
 Factor graphs are the de-facto standard for modeling SLAM. The nodes in the graph represent the robot poses and the landmark positions, and the factors represent the odometry and landmark measurements. \cref{fig:factor_graph} shows a simple SLAM problem with four poses, $x_t$, and two landmarks, $l_n$. The odometry, $u_t$, between the poses and landmark measurements, $z_{t,n}$ of landmark $n$ at time $t$ is given as
 
@@ -37,13 +18,6 @@ Factor graphs are the de-facto standard for modeling SLAM. The nodes in the grap
     \label{eq:landmark_measurement_pdf}
 \end{equation}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/factor_graph.drawio.pdf}
-    \caption{Factor graph of a simple SLAM problem containing four poses and two landmarks}
-    \label{fig:factor_graph}
-\end{figure}
-
 Using the factor graph formulation, the SLAM problem can be formulated as a maximum a posteriori (MAP) estimation, where the goal is to estimate the path, $X_t$, and map, $m$, that maximizes the likelihood given by
 
 \begin{equation}
@@ -55,25 +29,48 @@ which is also often called the back-end of SLAM.
 
 The front-end of SLAM consists of landmark extraction and data association. Landmark extraction is the procedure of finding and extracting landmarks from the sensors sensing the environment, for example, an RGB-D camera.  Data association is the procedure of determining the landmark identity of the extracted landmarks.
 
-Underwater SLAM is a challenging research topic, and task for underwater vehicles in long-term operation due to the limitations of subsea localization sensors and perception sensors for mapping \cite{Hidalgo2015ReviewTechniques}. The perception sensors available underwater are sonars and cameras. Sonars typically provide noisy and distorted images or low-resolution ranging, and cameras provide highly detailed images but are limited by the range of sight due to turbidity and lightning. For unstructured applications, often referred to as seafloor applications, side scan sonar (SSS), forward-looking sonar (FLS), and camera are the preferred perception sensors. Due to the problems with reduced range of sight for cameras and the high cost of FLS, this report focuses on landmark detection using SSS.
+\begin{figure} [h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/factor_graph.drawio.pdf}
+    \caption{Factor graph of a simple SLAM problem containing four poses and two landmarks}
+    \label{fig:factor_graph}
+\end{figure}
+
+
+Underwater SLAM is a challenging research topic, and task for underwater vehicles in long-term operation due to the limitations of subsea localization sensors and perception sensors for mapping \cite{Hidalgo2015ReviewTechniques}. The perception sensors available underwater are sonars and cameras. Sonars typically provide noisy and distorted images or low-resolution ranging, and cameras provide highly detailed images but are limited by the range of sight due to turbidity and that lack of light. For unstructured applications, often referred to as seafloor applications, side scan sonar (SSS), forward-looking sonar (FLS), and camera are the preferred perception sensors. Due to the problems with reduced range of sight for cameras and the high cost of FLS, this report focuses on landmark detection using SSS.
 
 \section{Side Scan Sonar}
 
-The side scan sonar is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor. \cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF). The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s, max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together.
+The side scan sonar is a two-transducer sonar where each transducer is mounted so that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor. \cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF) and a gracing angle, $\theta_s$. The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s, max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together, as shown in \cref{fig:stacking_of_sonar_image}. 
 
-\begin{figure}
+Projecting the SSS swath to the seafloor is hard \cite{Coiras2007MultiresolutionImages}, and since the topology of the seafloor is unknown, an assumption that the seafloor and all objects on it are flat. The flat floor assumption is used when calculating the ground range, $r_g$. The ground range represents the slant range, $r_s$, projected into the horizontal plane and is given by
+
+\begin{equation}
+    r_g = \sqrt{r_s^2 - h^2},
+    \label{eq:ground_range}
+\end{equation}
+
+where $h$ is the altitude of the AUV above the seafloor.
+
+\hspace{1cm}
+
+\begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/sss.drawio.pdf}
+    \includegraphics[trim=0cm 0cm 0cm 3.1cm, clip=true, width=0.7\textwidth]{figures/sss.drawio.pdf}
     \caption{Typical configuration of the side scan sonar.}
     \label{fig:sss}
 \end{figure}
 
-Since the topology of the seafloor is unknown, an assumption about a flat seafloor is made to calculate the ground range, $r_g$. The ground range represents the slant range, $r_s$, projected into the horizontal plane. \cref{eq:ground_range} shows the calculation of the ground range under the flat floor assumption, where $h$ is the altitude of the AUV above the seafloor.
+\hspace{0.5 cm}
 
-\begin{equation}
-    r_g = \sqrt{r_s^2 - h^2}.
-    \label{eq:ground_range}
-\end{equation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/stacking_of_sonar_image.drawio.pdf}
+    \caption{The figure shows how swaths are stacked together to form a sonar image.}
+    \label{fig:stacking_of_sonar_image}
+\end{figure}
+
+\hspace{0.5 cm}
 
 \section{Data normalization and smoothing}
 
@@ -86,14 +83,7 @@ Cubic splines can be used to both normalize SSS data \cite{ReitanHogstad2022Side
 
 where the first term is the error term and the second is the roughness measure. $n$ is the number of data entries, and $y_i$ sample $i$ of the data. $D^2f$ is the second derivate of $f$, and the integral is taken over the smallest interval containing all the entries of $x$. $p \in [0,1]$ is the smoothing parameter used to weigh between the error term and the roughness measure. 
 
-For smoothing SSS data, each of the swaths is divided into a left and right swath, coming from the left and right transducer. Each of the parts of the swath is smoothed individually to form a cubic spline regression of the data, resulting in
-
-\begin{equation}
-    \hat{I}(z) = f(z)
-    \label{eq:swath_smoothing}
-\end{equation}
-
-for each bin, where $f$ is the smoothing cubic spline of the swath, found from \cref{eq:cubic_spline}.
+For smoothing SSS data, each of the swaths is divided into a left and right swath, coming from the left and right transducer. Each of the parts of the swath is smoothed individually to form a cubic spline regression of the data, resulting in $\hat{I}(z) = f(z)$ for each bin, where $f$ is the smoothing cubic spline of the swath, found from \cref{eq:cubic_spline}.
 
 Normalization, on the other hand, estimates the underlying distribution by cubic spline regression to normalize the data by
 

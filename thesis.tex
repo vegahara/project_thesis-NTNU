@@ -12,6 +12,9 @@
 \addtolength{\oddsidemargin}{-.875in}
 \addtolength{\evensidemargin}{-.875in}
 \addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.3in}
+\addtolength{\textheight}{.7in}
+
 
 \DeclareFieldFormat[misc]{title}{\mkbibquote{#1}}  % show title in quotes
 \DeclareBibliographyDriver{misc}{%
@@ -21,7 +24,7 @@
     \newunit%
     \printfield{url}%
     \newunit%
-    \printfield{booktitle}%  display booktitle or last-accessed for websites
+    \printfield{booktitle}%  display book title or last-accessed for websites
     \newunit%
     \printfield{issn}%
     \newunit%
@@ -31,19 +34,11 @@
 
 \addbibresource{thesis.bib}
 
-%\input{glossary.tex} % add glossary and acronym lists before document
-
 \begin{document}
 
 \input{chapters/0a-abstract.tex}
 
 \tableofcontents
-%\listoffigures
-%\listoftables
-%\lstlistoflistings
-
-%\printglossary[type=\acronymtype] % Print acronyms
-%\printglossary                    % Print glossary
 
 \input{chapters/1-introduction}
 \input{chapters/2-background}
@@ -52,12 +47,7 @@
 \input{chapters/5-discussion}
 \input{chapters/6-conclusion}
 
-
-
 \chapter*{\bibname}
 \printbibliography[heading=none]
-
-\appendix
-
 
 \end{document}

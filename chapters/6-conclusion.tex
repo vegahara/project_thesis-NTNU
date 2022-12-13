@@ -1,3 +1,18 @@
-\chapter{Conclusion}
+\chapter{Conclusions and further work}
 
-The quality indicator is only able to point out where the sonar image is of bad quality but does not solve the problem.
+This report tested two different landmark detection methods for SSS, qualitatively compared them against each other, and presented a novel quality indicator for SSS data. 
+
+The main findings may be summarized as follows: first of all, with respect to the 1D landmark detector, which uses peak detection to find shadows and echoes in 1D sonar swaths, we noted how adding morphological operators effectively removes false positives and increases its consistency. At the same time doing this addition also leads to filtering out much of the geometrical information about the landmarks. However, even with increased consistency, it seems it cannot achieve acceptable performance and we deem it therefore unusable in the context of feature-based SLAM.
+
+The second method, which finds shadows in 2D sonar images using expert rules, also increases its performance as soon as one uses morphological operators (more precisely, increasing its consistency). Though our experiments have shown that this 2D landmark detector cannot consistently detect all landmarks - even if it has an acceptable performance TODO DEFINITION OF ACCEPTABLE. We suggest that future works should thus focus on adapting such 2D landmark detector to be able to work on SSS data mapped to the cartesian space, making parameters filtering the landmarks based on their actual size. 
+
+Finally, we comment on the here proposed quality indicator, which uses the information available in the dataset to infer its quality for the purposes of SLAM. We note that the indicator returns meaningful estimates when the situation is thought "easy", since it only infers on the overlapping of consecutive swaths and does not directly take into account changes in speed and the roll angle. The proposed indicator is thus brittle with respect to this situation, in the sense that it will provide non-reliable indications when anomalies in the data occur from changing speed or roll angle. Further work should thus focus on robustifying it, i.e., incorporating the effects of changes in speed and roll on the data. 
+
+Further, we believe that it would be useful for both the academic and industrial communities to have an openly available dataset of benchmarks enabling the comparison of every method against a common ground.
+
+
+
+
+
+
+
