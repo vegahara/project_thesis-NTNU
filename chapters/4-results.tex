@@ -22,12 +22,12 @@ The main goal when tuning the landmark detector methods was to have as few possi
 
 \section{Side scan sonar quality indicator}
 
-The quality indicator is a measure that tries to say something about the quality of the SSS data, a measure that should be lower when turning due to overlapping swaths. \cref{fig:path_and_quality_ind} shows the result of testing the quality indicator on the training data. The top left side is a plot of the path of the AUV in the xy-plane. Further, the quality indicator is overlayed as the color of the path. As expected, the data quality decreases when turning due to swath overlapping. In addition, the traveled distance in the xy-plane is also shown along the path. The acquired sonar data traveling along the path is plotted on the right side, and the image's bars on the top right are the quality indicator and the speed of the AUV. The Dashed horizontal lines in the image are displayed to show approximately in which part of the image the poor quality occurs. At a traveled distance of around $60 m$, two banana-like shadows appear. These could typically be examples of the anomalies and degradation of quality experienced when turning during a sonar survey. The bottom part of the figure shows a zoomed-in part of the path. The black lines correspond to the ground range for the maximum sensor opening for two and two consecutive swaths. For $q = 1.0$, the swaths do not overlap, but for $q = 0.54$ and $q=0.24$, the swaths overlap at the blue "x"s. 
+The quality indicator is a measure that tries to say something about the quality of the SSS data, a measure that should be lower when turning due to overlapping swaths. \cref{fig:path_and_quality_ind} shows the result of testing the quality indicator on the training data. The top left side is a plot of the path of the AUV in the xy-plane. Further, the quality indicator is overlayed as the color of the path. As expected, the data quality decreases when turning due to swath overlapping. In addition, the traveled distance in the xy-plane is also shown along the path. The acquired sonar data traveling along the path is plotted on the right side, and the image's bars on the top right are the quality indicator and the speed of the AUV. The Dashed horizontal lines in the image are displayed to show approximately in which part of the image the poor quality occurs. At a traveled distance of around $60 m$, two banana-like shadows appear. These could typically be examples of the anomalies and degradation of quality experienced when turning during a sonar survey. The bottom part of the figure shows a zoomed-in part of the path. The black lines correspond to the effective ground range, the ground range for the maximum sensor opening, for two and two consecutive swaths. For $q = 1.0$, the swaths do not overlap, but for $q = 0.54$ and $q=0.24$, the swaths overlap at the blue "x"s. 
 
 \begin{figure} % order of priority: h here, t top, b bottom, p page
   \centering
   \includegraphics[trim=0cm 0cm 0cm 0cm, clip=true, width=0.9\textwidth]{figures/quality_indicator_and_path.pdf}
-  \caption[Path with quality indicator overlayed]{\textbf{Top left:} The traveled path in the xy-plane of the AUV. The path's color corresponds to the quality indicator along the path, and the traveled distance is also shown. \textbf{Top right:} The right figure shows the sonar image acquired from moving along the path and the corresponding quality indicator. \textbf{Bottom:} A zoomed part of the path where the quality indicator is displayed as the color of the path and the black lines correspond to the ground range of the maximum sensor opening for two and two consecutive swaths. The blue "x"s marks were two consecutive swath overlaps.}
+  \caption[Path with quality indicator overlayed]{\textbf{Top left:} The traveled path in the xy-plane of the AUV. The path's color corresponds to the quality indicator along the path, and the traveled distance is also shown. \textbf{Top right:} The right figure shows the sonar image acquired from moving along the path and the corresponding quality indicator. \textbf{Bottom:} A zoomed part of the path where the quality indicator is displayed as the color of the path, and the black lines correspond to the effective ground range for two and two consecutive swaths. The blue "x"s marks were two consecutive swath overlaps.}
   \label{fig:path_and_quality_ind}
 \end{figure}
 
@@ -74,7 +74,7 @@ The 1D landmark detector has two tuning parameters, the threshold filtering the 
 
 As suggested in \cite{Al-Rawi2017LandmarkImages}, using normalized data and morphological operators to filter out thin landmarks were tested, and \cref{fig:1D_tuning_results} shows the results. As discussed above, the left image results from using unnormalized training data with a threshold of $E = 17$. The middle image is the result of testing the method on normalized data. Using the same considerations as when tuning the 1D landmark detector on unnormalized data, a threshold of $E = 1450$ was found. Again, all false positives are considered to originate from acoustic communication. The false positives are all echo landmarks and appear in pairs, one on the left side and one on the right side of the swath, and can be found approximately in swath numbers $1300$, $2000$, and $4200$. In addition, a few landmarks are inconsistently detected. On the right side, the results of applying a closing operation followed by an opening operation with quadratic structuring elements of sizes $s_c = 10^2$ and $s_o = 15^2$ on the middle image are shown. The sizes of the structuring elements were found by testing different sizes and choosing the ones that generated results most aligned with the tuning goals. All false positives are removed, and the resulting landmarks are mostly consistent. Both the rightmost shadow landmark and the shadow landmark at around swath number $1200$ are part of a larger landmark and are inconsistently detected. All results used a smoothing parameter of $p = \num{1e-5}$. \cref{tab:1D_parameters} summarizes the parameters used. 
 
-There is not much difference in comparing the left and middle images using unnormalized and normalized data. Normalized data has more false positives due to acoustic communication and slightly more inconsistent landmarks, but unnormalized data generates more thin unwanted landmarks. Using morphological operators on normalized data gives significantly better results and is therefore chosen to compare against the 2D landmark detector.
+Comparing the results in \cref{fig:1D_tuning_results}, there is not much difference in the left and middle images using unnormalized and normalized data. However, as discussed in \cref{sec:disc_1D_landmark_detector}, normalized data is preferred over unnormalized data. Using morphological operators on normalized data gives significantly better results and is therefore chosen to compare against the 2D landmark detector.
 
 \begin{table} [h!]
     \caption{Resulting parameters from tuning the 1D landmark detector on unnormalized and normalized training data.}
@@ -154,7 +154,7 @@ Both landmark detector methods were run on the test dataset to evaluate the perf
     \begin{subfigure}[t]{0.87\textwidth}
          \centering
          \includegraphics[trim=0cm 3.4cm 0cm 3.4cm, clip=true, width=\textwidth]{figures/path_sonar_colorbars_test.eps}
-         \caption{Test data}
+         \caption{\textbf{Left:} The traveled path of the AUV from the test data set. In addition, the traveled distance is shown along the path. \textbf{Right:} The acquired normalized sonar image, from the test data with its corresponding quality indicator and speed in the xy-plane showed in direct relation, respectively. The color scaling of the quality indicator and speed used for all test data is shown on the far right.}
          \label{fig:test_data}
      \end{subfigure}
      \hfill
@@ -167,9 +167,9 @@ Both landmark detector methods were run on the test dataset to evaluate the perf
      \begin{subfigure}[b]{0.44\textwidth}
          \centering
          \includegraphics[trim=9cm 1cm 10cm 1cm, clip=true, width=\textwidth]{figures/2D_result_single_test.eps}
-         \caption{2D landmark detector. Pink is the detected landmarks}
+         \caption{2D landmark detector. Pink is the detected landmarks.}
          \label{fig:2D_result_single_test}
      \end{subfigure}
-        \caption{Results from running landmark detectors on test data}
+        \caption{The test data represented and the results from running landmark detectors on the test data.}
         \label{fig:landmark_detection_test_data}
 \end{figure}

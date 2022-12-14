@@ -18,7 +18,7 @@ The novel quality indicator calculates the overlapping of consecutive swaths, co
     \label{fig:r_eff}
 \end{figure}
 
-\cref{fig:quality_ind} show the AUV at two consecutive timesteps, where $\Delta \psi$ is the absolute change in heading between the two timesteps (positive for both left and right turn), $\Delta d$ the distance traveled in the xy-plane between the two timesteps. $r_{g, max}$, $r_{g, eff}$ still the maximum and effective ground range, respectivley. $l$ is the distance between the AUV and the point on the swath where the next swath is crossing (could be at infinity in case of $\Delta \psi = 0$) and is given by
+\cref{fig:quality_ind} show the AUV at two consecutive timesteps, where $\Delta \psi$ is the absolute change in heading between the two timesteps (i.e., positive for both left and right turn), $\Delta d$ the distance traveled in the xy-plane between the two timesteps and $r_{g, max}$ and $r_{g, eff}$ are still the maximum and effective ground range, respectively. The distance between the AUV and the point on the swath where the next swath is crossing is $l$ (could be at infinity in case of $\Delta \psi = 0$) and is given by
 
 \begin{equation}
     l = \frac{\Delta d}{tan(\Delta \psi)}.
@@ -46,7 +46,7 @@ The 1D landmark detector, as in \cite{Al-Rawi2017LandmarkImages,} does peak dete
 Further, all the shadows and echoes are filtered to detect landmarks. The first step is to remove the echo from the FBR and the shadow from the blind zone, as these are not generated from a landmark. These are the two most significant echoes and shadows in \cref{fig:1D_swath_w_landmarks}. Next, all echoes and shadows are filtered by a simple threshold given by
 
 \begin{equation}
-    E = \frac{2\times width}{prominence}
+    E = \frac{2 width}{prominence}.
     \label{eq:1D_thres}
 \end{equation}
 
@@ -64,27 +64,27 @@ In \cite{Al-Rawi2017LandmarkImages}, un-normalized SSS data is used, but the use
 The 2D landmark detector, as in \cite{Leblond2019SonarProject}, finds shadows by intensity thresholding and uses a set of rules to filter out the shadows of the right size and shape. The first step is to perform an intensity thresholding on all the pixels to find shadows. The suggested intensity threshold is
 
 \begin{equation}
-    t_i = \frac{\Bar{I(x,y)}}{2}
+    t_i = \frac{\Bar{I(x,y)}}{2},
     \label{eq:orginal_int_thres}
 \end{equation}
 
 where $\Bar{I(x,y)}$ is the average pixel intensity in the sonar image. However, this threshold produced close to no shadows from the data, so a new intensity threshold is suggested
 
 \begin{equation}
-    t_i = [\Bar{I(x,y)} - I(x,y)_{min}] k_i + I(x,y)_{min} 
+    t_i = [\Bar{I(x,y)} - I(x,y)_{min}] k_i + I(x,y)_{min},
 \end{equation}
 
 where $I(x,y)_{min}$ is the average over the $100$ pixels with the lowest intensity, which increases robustness. $k_i$ is a tuning parameter ranging from $0$ to $1$. Using the result from the intensity thresholding, a series of filtering rules are applied to filter out shadows. First, the shadows get filtered based on how many swaths they span over, where both minimum and maximum height filtering is applied. Second, filtering based on the area of the shadows in $pixels^2$ is applied. To account for how the grazing angle affects the shadows, the area is corrected by
 
 \begin{equation}
-    A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}
+    A_{corr} = A_s \frac{r_{ob,min}}{r_{ob}},
     \label{eq:corrected_area}
 \end{equation}
 
 where $r_{ob, min}$ is a reference object ground range that is tuneable, $r_{ob}$ is the ground range to the object, and $A_s$ is the area of the shadow in $pixels^2$. The last step is to filter the shadows based on how much of the bounding box that surrounds them that are filled, where the fraction of filled is given by
 
 \begin{equation}
-    \frac{A_s}{A_{bb}}
+    \frac{A_s}{A_{bb}},
     \label{eq:fill_rate_bb}
 \end{equation}
 
@@ -100,7 +100,7 @@ where $A_{bb}$ is the area of the bounding box surrounding the shadow. The bound
         $s_c$             & Morphological closing on the shadows with SE of size $k_c$  \\ 
         $n_{swaths,min}$  & $n_{swaths} > n_{swaths,min}$                               \\ 
         $n_{swaths,max}$  & $n_{swaths} < n_{swaths,max}$                               \\ 
-        $r_{ob,min}$      & $A_{corr} = A_s \times \frac{r_{ob,min}}{r_{ob}}$           \\ 
+        $r_{ob,min}$      & $A_{corr} = A_s\frac{r_{ob,min}}{r_{ob}}$           \\ 
         $A_{min}$         & $A_{corr} > A_{min}$                                        \\ 
         $t_{fr}$          & $\frac{A_s}{A_{bb}} > t_{fr}$                               \\ 
         \hline
