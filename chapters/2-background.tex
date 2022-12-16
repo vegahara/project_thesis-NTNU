@@ -31,7 +31,7 @@ which is also often called the back-end of SLAM.
 
 The front-end of SLAM consists of landmark extraction and data association. Landmark extraction is the procedure of finding and extracting landmarks from the sensors sensing the environment, for example, an RGB-D camera.  Data association is the procedure of determining the landmark identity of the extracted landmarks.
 
-\begin{figure} [h]
+\begin{figure} [t]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/factor_graph.drawio.pdf}
     \caption{Factor graph of a simple SLAM problem containing four poses and two landmarks}
@@ -45,7 +45,7 @@ Underwater SLAM is a challenging research topic, and task for underwater vehicle
 
 The side scan sonar is a two-transducer sonar where each transducer is mounted such that it points downwards and outwards to the port and starboard side of the AUV, respectively \cite{Burguera2016High-ResolutionSonar}. Each transducer transmits an ultrasonic pulse periodically and measures the echo scattered back to the transducer from the seafloor. \cref{fig:sss} shows a typical SSS setup. Each transducer is mounted with an angle, $\theta$, from the AUVs y-axis and has a sensor opening, $\alpha$, restricting the direction of the ultrasonic pulse. The echo return is measured at fixed time intervals, where each measurement is referred to as a \textit{bin}. Each of the bins corresponds to a slant range, $r_s$, proportional to the pulse's time of flight (TOF) and a gracing angle, $\theta_s$. The time between the measurement of two subsequent bins governs the slant resolution, $\delta_s$. Further, the time between two pulses governs the sensor range $r_{s, max}$. All bins between two pulses are referred to as a \textit{swath}. To form a sonar image, subsequent swaths are stacked together, as shown in \cref{fig:stacking_of_sonar_image}. 
 
-Projecting the SSS swath to the seafloor is hard \cite{Coiras2007MultiresolutionImages}, and since the topology of the seafloor is unknown, a common assumption is to assume that the seafloor and all objects on it are flat \cite{Burguera2016High-ResolutionSonar, Shin2015BundleMapping}. The flat floor assumption is used when calculating the ground range, $r_g$. The ground range represents the slant range, $r_s$, projected into the horizontal plane and is given by
+Projecting the SSS swath to the seafloor is hard \cite{Coiras2007MultiresolutionImages}, and since the topology of the seafloor is unknown, a common assumption is to assume that the seafloor and all objects on it are flat \cite{Burguera2016High-ResolutionSonar, Shin2015BundleMapping, Burguera2014IntensityImages, Fallon2011EfficientSonar}. The flat floor assumption is used when calculating the ground range, $r_g$. The ground range represents the slant range, $r_s$, projected into the horizontal plane and is given by
 
 \begin{equation}
     r_g = \sqrt{r_s^2 - h^2},
@@ -54,25 +54,19 @@ Projecting the SSS swath to the seafloor is hard \cite{Coiras2007Multiresolution
 
 where $h$ is the altitude of the AUV above the seafloor.
 
-\hspace{1cm}
-
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[trim=0cm 0cm 0cm 3.1cm, clip=true, width=0.7\textwidth]{figures/sss.drawio.pdf}
     \caption{Typical configuration of the side scan sonar.}
     \label{fig:sss}
 \end{figure}
 
-\hspace{0.5 cm}
-
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/stacking_of_sonar_image.drawio.pdf}
     \caption{The figure shows how swaths are stacked together to form a sonar image.}
     \label{fig:stacking_of_sonar_image}
 \end{figure}
-
-\hspace{0.5 cm}
 
 \section{Data normalization and smoothing}
 
@@ -116,13 +110,6 @@ Morphological operators can be utilized to ensure consistent landmarks \cite{Yua
     \caption{The image shows the three first steps (from left to right) of a general image processing method using a structuring element that is moved along the image with a stride of one to compute new pixel values. The black dot corresponds to the origin of the structuring element. The image is padded to get a new image of the same size as the old one.}
     \label{fig:image_processing_basics}
 \end{figure}
-
-% Gaussian filtering approximates the kernel as a 2D gaussian distribution to perform low-pass filtering on an image. As the structuring element is slid over the image, each of the image pixels covered by the center is a sum of products of the image intensities and the values of the structuring element. $I_s(x,y)$ be the intensities of the pixels covered by the structuring element and let $S(x,y)$ be the values of each of the elements of the structuring element, both with origin at the center. Further, let the size of the structuring element be $m\times n$, with both $m$ and $n$ restricted to being odd. Then the new pixel value at the origin is:
-
-% \begin{equation}
-%     I_s(0,0) = \sum_{i = -\frac{n-1}{2}}^\frac{n-1}{2} \sum_{j = -\frac{m-1}{2}}^\frac{m-1}{2} I_s(i,j) \times S(i,j).
-%     \label{eq:gaussian_blur}
-% \end{equation}
 
 The four basic morphological operators are erosion, dilation, closing, and opening, where the two latter are a combination of the first operations. As the image, the structuring element does also have binary values. If we restrict the structuring element to be of odd width and height, the erosion is defined as 
 
