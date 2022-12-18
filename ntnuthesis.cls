@@ -42,10 +42,10 @@
             \begin{center}
                 \vspace*{1cm}
         
-                \textbf{\Huge{Comparison of two classical landmark detectors for side scan sonars}\par} 
+                \textbf{\Huge{Comparison of two classical landmark detectors for side scan sonar}\par} 
         
                 \vspace{0.5cm}
-                    \Large{\normalfont	This report tests two landmark detectors and qualitatively compares them against each other on data from the Trondheim fjord, and presents a novel quality indicator for side scan sonar data.}
+                    \Large{\normalfont	This report tests two landmark detectors, compares them against each other on data from the Trondheim fjord, and presents a novel quality indicator for side scan sonar data.}
                     
                 \vspace{1.2cm}
         
