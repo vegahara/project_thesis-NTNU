@@ -107,15 +107,15 @@ Morphological operators can be utilized to ensure consistent landmarks \cite{Yua
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{figures/Image_processing_essentials.drawio.pdf}
-    \caption{The image shows the three first steps (from left to right) of a general image processing method using a structuring element that is moved along the image with a stride of one to compute new pixel values. The black dot corresponds to the origin of the structuring element. The image is padded to get a new image of the same size as the old one.}
+    \caption{The image shows the three first steps (from left to right) of a general image processing method using a structuring element that is moved along the image to compute new pixel values. The black dot corresponds to the anchor point of the structuring element. The image is padded to get a new image of the same size as the original.}
     \label{fig:image_processing_basics}
 \end{figure}
 
-The four basic morphological operators are erosion, dilation, closing, and opening, where the two latter are a combination of the first operations. Both the image and the structuring element have binary values. Let $I_{SE}(x,y)$ be the extracted binary values from the part of the image covered by the structuring element, where $I_{SE}(x,y)$ has the same size as the structuring element, and $S(x,y)$ be the structuring element of size $m \times n$. Then the erosion is defined as 
+The four basic morphological operators are erosion, dilation, closing, and opening, where the two latter are a combination of the first operations. Both the image and the structuring element have binary values. Let $I_{SE}(x,y)$ be the extracted binary values from the part of the image covered by the structuring element, where $I_{SE}(x,y)$ has the same size as the structuring element, and let $S(x,y)$ be the structuring element of size $m \times n$. Then the erosion is defined as 
 
 \begin{equation}
     \begin{split}
-        I_{SE}(a_x,a_y) = \prod_{i = 1}^m \prod_{j = 1}^n f(i,j) \\
+        I(a_x,a_y) = \prod_{i = 1}^m \prod_{j = 1}^n f(i,j) \\
         f(x,y) = 
         \begin{cases}
         I_{SE}(x,y) & S(x,y) \neq 0 \\
@@ -128,8 +128,8 @@ The four basic morphological operators are erosion, dilation, closing, and openi
 and the dilation as
 
 \begin{equation}
-    I_{SE}(a_x,a_y) = min(1, \sum_{i = 1}^m \sum_{j = 1}^n I_{SE}(i,j) \; S(i,j)).
+    I(a_x,a_y) = min(1, \sum_{i = 1}^m \sum_{j = 1}^n I_{SE}(i,j) \; S(i,j)).
     \label{eq:dialation}
 \end{equation}
 
-where $(a_x,a_y)$ is the anchor point of the structuring element. The effect of an erosion operation is that all objects are shrunk, and small objects are removed. On the other hand, dilation results in all objects being thickened and holes in objects being filled. The effects of eliminating small objects and filling holes help generate consistent landmarks. However, the side effect of shrinking and thickening objects are unwanted. A dilation and erosion operation is combined to revert the side effects, and the new operations are called opening and closing. An opening operation is an erosion followed by a dilation, effectively removing small objects from the image. Closing is a dilation followed by erosion, eliminating holes in the image. 
+where $I(a_x,a_y)$ is the resulting intensity at the anchor point of the structuring element. The effect of an erosion operation is that all objects are shrunk, and small objects are removed. On the other hand, dilation results in all objects being thickened and holes in objects being filled. The effects of eliminating small objects and filling holes help generate consistent landmarks. However, the side effect of shrinking and thickening objects are unwanted. A dilation and erosion operation is combined to revert the side effects, and the new operations are called opening and closing. An opening operation is an erosion followed by a dilation, effectively removing small objects from the image. Closing is a dilation followed by erosion, eliminating holes in the image. 
